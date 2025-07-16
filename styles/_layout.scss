@@ -1,0 +1,19 @@
+// styles/_layout.scss
+
+@import 'variables'; // Importa as variáveis
+
+.login-page {
+  min-height: 100vh; // Garante que a página ocupe a altura total da viewport
+  display: flex; // Usa flexbox para centralizar o conteúdo
+  align-items: center; // Centraliza verticalmente
+  justify-content: center; // Centraliza horizontalmente
+  background-color: $background-light; // Cor de fundo suave
+  padding: $spacing-lg; // Adiciona um padding para espaçamento em telas menores
+
+  // Estilos para o cartão de login dentro da página
+  .card {
+    width: 100%;
+    max-width: 480px; // Largura máxima para o cartão de login
+    // As outras propriedades do .card já estão em _components.scss
+  }
+}

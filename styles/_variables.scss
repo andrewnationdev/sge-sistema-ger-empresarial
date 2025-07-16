@@ -1,0 +1,44 @@
+// styles/_variables.scss
+
+// Cores
+$primary-color: #4A90E2; // Azul vibrante para ações principais
+$secondary-color: #50E3C2; // Verde água para acentos
+$accent-color: #FF6B6B; // Vermelho suave para alertas ou destaque
+$text-dark: #333333; // Texto principal escuro
+$text-light: #F8F8F8; // Texto claro (para fundos escuros)
+$background-light: #F8F8F8; // Fundo claro
+$background-dark: #2C3E50; // Fundo escuro (opcional, para temas)
+$border-color: #E0E0E0; // Cor de borda suave
+$success-color: #28a745; // Verde para sucesso
+$error-color: #dc3545; // Vermelho para erro
+$warning-color: #ffc107; // Amarelo para aviso
+
+// Tipografia
+$font-family-base: 'Inter', sans-serif; // Fonte principal
+$font-family-heading: 'Poppins', sans-serif; // Fonte para títulos (opcional)
+
+$font-size-base: 16px;
+$font-size-small: 0.875rem; // 14px
+$font-size-large: 1.125rem; // 18px
+
+// Espaçamento
+$spacing-unit: 8px;
+$spacing-xs: $spacing-unit * 0.5; // 4px
+$spacing-sm: $spacing-unit * 1;   // 8px
+$spacing-md: $spacing-unit * 2;   // 16px
+$spacing-lg: $spacing-unit * 3;   // 24px
+$spacing-xl: $spacing-unit * 4;   // 32px
+
+// Sombras
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+$shadow-md: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+$shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+
+// Bordas
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Transições
+$transition-speed: 0.3s;
+$transition-ease: ease-in-out;
