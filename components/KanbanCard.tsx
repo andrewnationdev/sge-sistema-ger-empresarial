@@ -1,19 +1,20 @@
 import { ITarefa } from "../types/kanban";
 import React from "react";
 import { getCardColorFromStatus } from "../utils/kanban";
+import formatDate from "../utils/dateFormat";
 
-export default function KanbanCard(props: ITarefa) {
+export default function KanbanCard({ card, onClick }: { card: ITarefa, onClick: () => {} }) {
   return (
-    <div className={`card text-bg-${getCardColorFromStatus({ status: props.status, prioridade: props.prioridade })} mb-3`}>
+    <div className={`card text-bg-${getCardColorFromStatus({ status: card.status, prioridade: card.prioridade })} mb-3`} onClick={onClick}>
       <div className="card-header">
-        {props.titulo}
+        {card.titulo} <br />
+        <small>Concluir até: {formatDate(card.dataVencimento)}</small>
       </div>
       <div className="card-body">
-        Concluir até: {props.dataVencimento} <br />
-        {props.descricao}
+        {card.descricao}
       </div>
       <div className="card-footer">
-        Criado por <strong>{props.dataCriacao}</strong> em <em>{props.dataCriacao}</em>
+        <small>Criado por <strong>{"Funcionário"}</strong> em <em>{formatDate(card.dataCriacao)}</em></small>
       </div>
     </div>
 
