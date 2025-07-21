@@ -1,68 +1,48 @@
-// components/TarefaForm.js
-
 import React, { useState, useEffect } from 'react';
 import { ITarefa } from '../../types/kanban';
 
-// Você pode passar valores iniciais para o formulário, úteis para edição
-// Por exemplo: <TarefaForm initialData={tarefaExistente} onSubmit={handleSave} />
-export default function EditTaskForm({ initialData = {
-    id: 0,
-    titulo: '',
-    descricao: '',
-    status: 'A FAZER',
-    prioridade: 'BAIXA',
-    dataCriacao: '',
-    dataVencimento: '',
-    criadoPorUsuarioId: 0,
-    responsavelFuncionarioId: 0
-}, onSubmit } : {initialData: ITarefa, onSubmit: () => {}}) {
-  const [formData, setFormData] = useState({
-    titulo: initialData.titulo || '',
-    descricao: initialData.descricao || '',
-    status: initialData.status || 'A FAZER', // Valor padrão
-    prioridade: initialData.prioridade || 'BAIXA', // Valor padrão
-    dataVencimento: initialData.dataVencimento || '', // Formato YYYY-MM-DD
-    criadoPorUsuarioId: initialData.criadoPorUsuarioId || '', // Pode ser nulo, então string vazia
-    responsavelFuncionarioId: initialData.responsavelFuncionarioId || '', // Pode ser nulo, então string vazia
+export default function TaskForm({ initialData, onSubmit }: { initialData?: ITarefa | null, onSubmit: (data: Partial<ITarefa>) => void }) {
+  const [formData, setFormData] = useState<Partial<ITarefa>>({
+    titulo: initialData?.titulo || '',
+    descricao: initialData?.descricao || '',
+    status: initialData?.status || 'A FAZER',
+    prioridade: initialData?.prioridade || 'BAIXA',
+    data_vencimento: initialData?.data_vencimento || '',
+    criado_por_usuario_id: initialData?.criado_por_usuario_id || null,
+    responsavel_funcionario_id: initialData?.responsavel_funcionario_id || null,
   });
 
-  // Este useEffect garante que se `initialData` mudar (ex: ao editar um novo item),
-  // o formulário seja redefinido com os novos dados.
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        titulo: initialData.titulo || '',
-        descricao: initialData.descricao || '',
-        status: initialData.status || 'A FAZER',
-        prioridade: initialData.prioridade || 'BAIXA',
-        dataVencimento: initialData.dataVencimento || '',
-        criadoPorUsuarioId: initialData.criadoPorUsuarioId || '',
-        responsavelFuncionarioId: initialData.responsavelFuncionarioId || '',
-      });
-    }
+    setFormData({
+      titulo: initialData?.titulo || '',
+      descricao: initialData?.descricao || '',
+      status: initialData?.status || 'A FAZER',
+      prioridade: initialData?.prioridade || 'BAIXA',
+      data_vencimento: initialData?.data_vencimento || '',
+      criado_por_usuario_id: initialData?.criado_por_usuario_id || null,
+      responsavel_funcionario_id: initialData?.responsavel_funcionario_id || null,
+    });
   }, [initialData]);
 
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
+
     setFormData((prevData) => ({
       ...prevData,
-      // Converte para número se for um input do tipo 'number'
+
       [name]: type === 'number' ? (value === '' ? null : Number(value)) : value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você pode adicionar validações antes de enviar
     console.log('Dados do Formulário:', formData);
-    if (onSubmit) {
-      onSubmit(formData);
-    }
+    onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit}  style={{maxHeight: "450px", overflowY: "scroll"}}>
+    <form onSubmit={handleSubmit} style={{ maxHeight: "450px", overflowY: "scroll" }}>
       <div className="mb-3">
         <label htmlFor="titulo" className="form-label">Título da Tarefa:</label>
         <input
@@ -70,7 +50,7 @@ export default function EditTaskForm({ initialData = {
           className="form-control"
           id="titulo"
           name="titulo"
-          value={formData.titulo}
+          value={formData.titulo || ''}
           onChange={handleChange}
           required
         />
@@ -82,8 +62,8 @@ export default function EditTaskForm({ initialData = {
           className="form-control"
           id="descricao"
           name="descricao"
-          rows="3"
-          value={formData.descricao}
+          rows={3}
+          value={formData.descricao || ''}
           onChange={handleChange}
         ></textarea>
       </div>
@@ -94,7 +74,7 @@ export default function EditTaskForm({ initialData = {
           className="form-select"
           id="status"
           name="status"
-          value={formData.status}
+          value={formData.status || 'A FAZER'}
           onChange={handleChange}
           required
         >
@@ -110,7 +90,7 @@ export default function EditTaskForm({ initialData = {
           className="form-select"
           id="prioridade"
           name="prioridade"
-          value={formData.prioridade}
+          value={formData.prioridade || 'BAIXA'}
           onChange={handleChange}
           required
         >
@@ -126,8 +106,8 @@ export default function EditTaskForm({ initialData = {
           type="date"
           className="form-control"
           id="dataVencimento"
-          name="dataVencimento"
-          value={formData.dataVencimento}
+          name="data_vencimento"
+          value={formData.data_vencimento || ''}
           onChange={handleChange}
         />
       </div>
@@ -138,8 +118,8 @@ export default function EditTaskForm({ initialData = {
           type="number"
           className="form-control"
           id="criadoPorUsuarioId"
-          name="criadoPorUsuarioId"
-          value={formData.criadoPorUsuarioId === null ? '' : formData.criadoPorUsuarioId}
+          name="criado_por_usuario_id"
+          value={formData.criado_por_usuario_id === null ? '' : formData.criado_por_usuario_id}
           onChange={handleChange}
           placeholder="Opcional"
         />
@@ -151,14 +131,18 @@ export default function EditTaskForm({ initialData = {
           type="number"
           className="form-control"
           id="responsavelFuncionarioId"
-          name="responsavelFuncionarioId"
-          value={formData.responsavelFuncionarioId === null ? '' : formData.responsavelFuncionarioId}
+          name="responsavel_funcionario_id"
+          value={formData.responsavel_funcionario_id === null ? '' : formData.responsavel_funcionario_id}
           onChange={handleChange}
           placeholder="Opcional"
         />
       </div>
-
-      <button type="submit" className="btn btn-primary">Salvar Tarefa</button>
+      <button type="submit" className="btn btn-primary">
+        {initialData ? "Salvar Alterações" : "Adicionar Tarefa"}
+      </button>
+      {initialData && <button className="btn btn-danger">
+        Deletar Item
+        </button>}
     </form>
   );
 }

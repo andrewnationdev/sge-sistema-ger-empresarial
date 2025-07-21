@@ -27,20 +27,20 @@ export interface ITarefa {
   /**
    * Data e hora de criação da tarefa.
    */
-  dataCriacao: string; // Representado como string (ISO 8601) para TIMESTAMP
+  data_criacao: string; // Representado como string (ISO 8601) para TIMESTAMP
 
   /**
    * Data limite para a conclusão da tarefa. Pode ser nula.
    */
-  dataVencimento: string | null; // Representado como string ('YYYY-MM-DD') para DATE
+  data_vencimento: string | null; // Representado como string ('YYYY-MM-DD') para DATE
 
   /**
    * ID do usuário que criou esta tarefa. Pode ser nulo se não houver referência.
    */
-  criadoPorUsuarioId: number | null;
+  criado_por_usuario_id: number | null;
 
   /**
    * ID do funcionário responsável por esta tarefa. Pode ser nulo se não houver atribuição.
    */
-  responsavelFuncionarioId: number | null;
+  responsavel_funcionario_id: number | null;
 }
