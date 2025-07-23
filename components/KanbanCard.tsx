@@ -15,10 +15,11 @@ export default function KanbanCard({ card, onClick }: { card: ITarefa, onClick: 
       <div className="card-body">
         {card.descricao}
       </div>
-      <div className="card-footer">
-        <small>Criado por <strong>{"Funcionário"}</strong> em <em>{formatDate(card.data_criacao)}</em></small>
-      </div>
     </div>
 
   )
 }
+
+/**<div className="card-footer">
+        <small>Criado por <strong>{"Funcionário"}</strong> em <em>{formatDate(card.data_criacao)}</em></small>
+      </div> */

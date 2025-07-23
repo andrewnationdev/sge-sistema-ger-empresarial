@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import GlobalHeader from '../components/GlobalHeader';
 import KanbanCard from '../components/KanbanCard';
 import TaskModal from '../components/form/TaskModal';
@@ -12,10 +12,10 @@ export default function ProjetosPage() {
   const router = useRouter();
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<ITarefa | null>(null);
-  
   const [tarefas, setTarefas] = useState<ITarefa[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -23,7 +23,7 @@ export default function ProjetosPage() {
     router.push('/login');
   };
 
- const fetchTarefas = useCallback(async () => {
+  const fetchTarefas = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -47,8 +47,7 @@ export default function ProjetosPage() {
         throw new Error(errorData.message || 'Falha ao buscar tarefas.');
       }
 
-      const data: any[] = await response.json(); 
-
+      const data: any[] = await response.json();
 
       setTarefas(data.map(task => {
         const processDate = (dbDate: string | null | undefined): string | null => {
@@ -73,7 +72,7 @@ export default function ProjetosPage() {
           data_vencimento: processDate(task.data_vencimento),
           criado_por_usuario_id: task.criado_por_usuario_id,
           responsavel_funcionario_id: task.responsavel_funcionario_id
-        } as unknown as ITarefa;
+        } as ITarefa;
       }));
     } catch (err: any) {
       console.error('Erro ao buscar tarefas:', err);
@@ -123,17 +122,20 @@ export default function ProjetosPage() {
   const handleSaveTask = async (taskData: Partial<ITarefa>) => {
     try {
       let response;
-      let finalTask: ITarefa;
       const token = localStorage.getItem('token');
 
       if (!token) {
-          throw new Error('Usuário não autenticado. Redirecionando para o login.');
+        throw new Error('Usuário não autenticado. Redirecionando para o login.');
       }
 
       const dataToSend = {
-          ...taskData,
-          criado_por_usuario_id: taskData.criado_por_usuario_id === null || taskData.criado_por_usuario_id === '' ? null : Number(taskData.criado_por_usuario_id),
-          responsavel_funcionario_id: taskData.responsavel_funcionario_id === null || taskData.responsavel_funcionario_id === '' ? null : Number(taskData.responsavel_funcionario_id),
+        titulo: taskData.titulo,
+        descricao: taskData.descricao,
+        status: taskData.status,
+        prioridade: taskData.prioridade,
+        data_vencimento: taskData.data_vencimento === '' ? null : taskData.data_vencimento,
+        criado_por_usuario_id: taskData.criado_por_usuario_id === null || taskData.criado_por_usuario_id === '' ? null : Number(taskData.criado_por_usuario_id),
+        responsavel_funcionario_id: taskData.responsavel_funcionario_id === null || taskData.responsavel_funcionario_id === '' ? null : Number(taskData.responsavel_funcionario_id),
       };
 
       if (selectedTask) {
@@ -143,15 +145,14 @@ export default function ProjetosPage() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ ...dataToSend, id: selectedTask.id }),
+          body: JSON.stringify({ ...dataToSend, id: selectedTask.id }), // Inclui o ID para PUT
         });
 
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Falha ao atualizar a tarefa.');
         }
-        finalTask = { ...selectedTask, ...taskData } as ITarefa;
-        console.log('Tarefa atualizada no backend:', finalTask);
+        console.log('Tarefa atualizada no backend (resposta):', await response.json());
 
       } else {
         response = await fetch(API_BASE_URL, {
@@ -160,7 +161,7 @@ export default function ProjetosPage() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify(dataToSend),
+          body: JSON.stringify(dataToSend), // Usa dataToSend mapeado
         });
 
         if (!response.ok) {
@@ -168,42 +169,63 @@ export default function ProjetosPage() {
           throw new Error(errorData.message || 'Falha ao adicionar nova tarefa.');
         }
         const result = await response.json();
-        finalTask = {
-          ...taskData,
-          id: result.id,
-          dataCriacao: new Date().toISOString().split('T')[0],
-        } as ITarefa;
-        console.log('Nova tarefa adicionada no backend:', finalTask);
+        console.log('Nova tarefa adicionada no backend (resposta):', result);
       }
 
       await fetchTarefas();
-
       handleCloseTaskModal();
     } catch (err: any) {
       console.error('Erro ao salvar tarefa:', err);
       alert(`Ocorreu um erro ao salvar a tarefa: ${err.message || 'Erro desconhecido'}`);
       if (err.message === 'Usuário não autenticado. Redirecionando para o login.') {
-          router.push('/login');
+        router.push('/login');
       }
     }
   };
 
-  const tarefasAFazer = tarefas.filter(tarefa => tarefa.status === "A FAZER");
-  const tarefasEmAndamento = tarefas.filter(tarefa => tarefa.status === "EM ANDAMENTO");
-  const tarefasConcluido = tarefas.filter(tarefa => tarefa.status === "CONCLUIDO");
+  // NOVO: Lógica de filtragem com useMemo
+  const filteredTarefas = useMemo(() => {
+    if (!searchTerm) {
+      return tarefas; // Se não houver termo de busca, retorna todas as tarefas
+    }
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    return tarefas.filter(tarefa =>
+      tarefa.titulo.toLowerCase().includes(lowerCaseSearchTerm) ||
+      tarefa.descricao?.toLowerCase().includes(lowerCaseSearchTerm) ||
+      tarefa.status.toLowerCase().includes(lowerCaseSearchTerm) ||
+      tarefa.prioridade.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+  }, [tarefas, searchTerm]);
+
+  const tarefasAFazer = filteredTarefas.filter(tarefa => tarefa.status === "A FAZER");
+  const tarefasEmAndamento = filteredTarefas.filter(tarefa => tarefa.status === "EM ANDAMENTO");
+  const tarefasConcluido = filteredTarefas.filter(tarefa => tarefa.status === "CONCLUIDO");
 
   return (
     <main>
       <GlobalHeader userName={userName} handleLogout={handleLogout} />
       <div className="container mt-5">
-        <div className="d-flex justify-content-between">
-          <h1 className="mb-4">Lista Kanban de Tarefas e Projetos</h1>
-          {!loading && !error && (
-            <button className="btn btn-primary mb-3" onClick={handleOpenAddModal}>
-              <i className="bi bi-plus-lg"></i> Adicionar Tarefa
-            </button>
-          )}
-        </div>
+        <h1 className="mb-0">Lista Kanban de Tarefas e Projetos</h1>
+
+        {!loading && !error && <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="input-group" style={{ maxWidth: '300px' }}>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar tarefas..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <span className="input-group-text"><i className="bi bi-search"></i></span>
+          </div>
+          <div className="d-flex justify-content-end mb-3">
+            {!loading && !error && (
+              <button className="btn btn-primary" onClick={handleOpenAddModal}>
+                <i className="bi bi-plus-lg"></i> Adicionar Tarefa
+              </button>
+            )}
+          </div>
+        </div>}
 
         {loading && (
           <div className="text-center">
