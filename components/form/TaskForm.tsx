@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ITarefa } from '../../types/kanban';
 
-export default function TaskForm({ initialData, onSubmit }: { initialData?: ITarefa | null, onSubmit: (data: Partial<ITarefa>) => void }) {
+export default function TaskForm({ initialData, onSubmit, onDelete }: { initialData?: ITarefa | null, onSubmit: (data: Partial<ITarefa>) => void, onDelete: (id: string | number) => void }) {
   const [formData, setFormData] = useState<Partial<ITarefa>>({
     titulo: initialData?.titulo || '',
     descricao: initialData?.descricao || '',
@@ -140,9 +140,9 @@ export default function TaskForm({ initialData, onSubmit }: { initialData?: ITar
       <button type="submit" className="btn btn-primary">
         {initialData ? "Salvar Alterações" : "Adicionar Tarefa"}
       </button>
-      {initialData && <button className="btn btn-danger">
+      {initialData && <button type="button" className="btn btn-danger" onClick={() => onDelete(initialData.id)}>
         Deletar Item
-        </button>}
+      </button>}
     </form>
   );
 }

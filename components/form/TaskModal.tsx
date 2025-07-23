@@ -1,7 +1,7 @@
 import React from 'react';
 import TaskForm from './TaskForm';
 
-export default function TaskModal({ onClose, task, onSave }) {
+export default function TaskModal({ onClose, task, onSave, onDelete }) {
   const isEditing = !!task;
   const title = isEditing ? "Visualizar e Editar Tarefa" : "Adicionar Nova Tarefa";
 
@@ -42,7 +42,7 @@ export default function TaskModal({ onClose, task, onSave }) {
           &times;
         </button>
         <h2>{title}</h2>
-        <TaskForm initialData={task} onSubmit={onSave} />
+        <TaskForm initialData={task} onSubmit={onSave} onDelete={onDelete}/>
       </div>
     </div>
   );

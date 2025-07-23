@@ -14,8 +14,9 @@ export default function FuncionariosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [show_funcionario_modal, setShowFuncionarioModal] = useState(false);
-  const [funcionario, setFuncionario] = useState<IFuncionario>();
-  const [mode, setMode] = useState<"create"|"edit"|"view">("create");
+  const [funcionario, setFuncionario] = useState<IFuncionario | null>(null); // Pode ser null para criação
+  const [mode, setMode] = useState<"create" | "edit" | "view">("create");
+  const [search_term, setSearchTerm] = useState<string>(''); // Novo estado para o termo de busca
 
   const handle_logout = () => {
     localStorage.removeItem('token');
@@ -23,7 +24,7 @@ export default function FuncionariosPage() {
     router.push('/login');
   };
 
-  const fetchFuncionarios = useCallback(async () => {
+  const fetchFuncionarios = useCallback(async (searchTerm: string = '') => { // Adicionado searchTerm como parâmetro
     setLoading(true);
     setError(null);
 
@@ -34,7 +35,14 @@ export default function FuncionariosPage() {
     }
 
     try {
-      const response = await fetch(API_FUNCIONARIOS_URL, {
+      const queryParams = new URLSearchParams();
+      if (searchTerm) {
+        queryParams.append('search', searchTerm);
+      }
+
+      const url = `${API_FUNCIONARIOS_URL}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -70,26 +78,26 @@ export default function FuncionariosPage() {
   }, [router]);
 
   useEffect(() => {
-    fetchFuncionarios();
-  }, [fetchFuncionarios]);
+    fetchFuncionarios(search_term); // Chama fetchFuncionarios com o termo de busca
+  }, [fetchFuncionarios, search_term]); // Re-executa quando search_term muda
 
-useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            router.push('/login');
-            return;
-        }
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
 
-        const userString = localStorage.getItem('user');
-        if (userString) {
-            try {
-                const user = JSON.parse(userString);
-                setUserName(user.nome_usuario || user.email);
-            } catch (e) {
-                console.error("Erro ao analisar dados do usuário do localStorage:", e);
-            }
-        }
-    }, [router]);
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      try {
+        const user = JSON.parse(userString);
+        setUserName(user.nome_usuario || user.email);
+      } catch (e) {
+        console.error("Erro ao analisar dados do usuário do localStorage:", e);
+      }
+    }
+  }, [router]);
 
   const handle_open_funcionario_modal = () => {
     setShowFuncionarioModal(true);
@@ -97,6 +105,9 @@ useEffect(() => {
 
   const handle_close_funcionario_modal = () => {
     setShowFuncionarioModal(false);
+    setFuncionario(null); // Limpa o funcionário selecionado ao fechar
+    setMode("create"); // Reseta o modo para criação
+    fetchFuncionarios(search_term); // Recarrega a lista após fechar o modal
   };
 
   const handle_save_funcionario = async (funcionario_data: Partial<IFuncionario>) => {
@@ -106,14 +117,22 @@ useEffect(() => {
         throw new Error('Usuário não autenticado.');
       }
 
+      const is_update = funcionario_data.id !== undefined && funcionario_data.id !== null;
+      const method = is_update ? 'PATCH' : 'POST';
+      const url = is_update ? `${API_FUNCIONARIOS_URL}?id=${funcionario_data.id}` : API_FUNCIONARIOS_URL;
+
       const data_to_send = {
         ...funcionario_data,
         ativo: funcionario_data.ativo !== undefined ? funcionario_data.ativo : true,
         usuario_id: funcionario_data.usuario_id === null || funcionario_data.usuario_id === '' ? null : Number(funcionario_data.usuario_id),
       };
 
-      const response = await fetch(API_FUNCIONARIOS_URL, {
-        method: 'POST',
+      if (is_update) {
+        delete data_to_send.id;
+      }
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
@@ -123,25 +142,21 @@ useEffect(() => {
 
       if (!response.ok) {
         const error_data = await response.json();
-        throw new Error(error_data.message || 'Falha ao cadastrar funcionário.');
+        throw new Error(error_data.message || `Falha ao ${is_update ? 'atualizar' : 'cadastrar'} funcionário.`);
       }
 
-      console.log('Funcionário cadastrado com sucesso!', await response.json());
-      await fetchFuncionarios();
-      handle_close_funcionario_modal();
-      alert('Funcionário cadastrado com sucesso!');
+      alert(`Funcionário ${is_update ? 'atualizado' : 'cadastrado'} com sucesso!`);
+      handle_close_funcionario_modal(); // Fecha o modal e recarrega a lista
     } catch (err: any) {
       console.error('Erro ao salvar funcionário:', err);
-      alert(`Erro ao cadastrar funcionário: ${err.message || 'Erro desconhecido'}`);
+      alert(`Erro ao salvar funcionário: ${err.message || 'Erro desconhecido'}`);
     }
   };
 
-  const clear_modal_state = () => {
-    setFuncionario({});
-    setMode("create");
-  }
-
   const handle_deactivate_funcionario = async (funcionario_id: number) => {
+    if (!window.confirm('Tem certeza que deseja desativar este funcionário?')) {
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -167,9 +182,8 @@ useEffect(() => {
         throw new Error(error_data.message || 'Falha ao desativar funcionário.');
       }
 
-      console.log('Funcionário desativado com sucesso!', await response.json());
-      await fetchFuncionarios();
       alert('Funcionário desativado com sucesso!');
+      fetchFuncionarios(search_term); // Recarrega a lista
     } catch (err: any) {
       console.error('Erro ao desativar funcionário:', err);
       alert(`Erro ao desativar funcionário: ${err.message || 'Erro desconhecido'}`);
@@ -181,12 +195,24 @@ useEffect(() => {
       <GlobalHeader userName={userName} handleLogout={handle_logout} />
       <div className="container mt-5">
         <h1 className="mb-4">Lista de Funcionários</h1>
-        <button className="btn btn-primary mb-3" onClick={() => {
-          clear_modal_state();
-          handle_open_funcionario_modal();
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <div className="col-md-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar por nome, email, cargo..."
+              value={search_term}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary" onClick={() => {
+            setFuncionario(null); // Garante que é null para criar
+            setMode("create");
+            handle_open_funcionario_modal();
           }}>
-          <i className="bi bi-person-vcard"></i> Cadastrar Funcionário
-        </button>
+            <i className="bi bi-person-vcard"></i> Cadastrar Funcionário
+          </button>
+        </div>
 
         {loading && (
           <div className="text-center">
@@ -214,7 +240,7 @@ useEffect(() => {
                   <th scope="col">Cargo</th>
                   <th scope="col">Email</th>
                   <th scope="col">Telefone</th>
-                  <th scope="col">Data Contratação</th>
+                  <th scope="col">Ativo</th>
                   <th scope="col">Ações</th>
                 </tr>
               </thead>
@@ -224,7 +250,7 @@ useEffect(() => {
                     <td colSpan={9} className="text-center">Nenhum funcionário encontrado.</td>
                   </tr>
                 ) : (
-                  funcionarios.filter((f) => f.ativo == true).map((funcionario) => (
+                  funcionarios.filter((f) => f.ativo).map((funcionario) => (
                     <tr key={funcionario.id}>
                       <th scope="row">{funcionario.id}</th>
                       <td>{funcionario.nome} {funcionario.sobrenome}</td>
@@ -232,25 +258,27 @@ useEffect(() => {
                       <td>{funcionario.cargo || 'N/A'}</td>
                       <td>{funcionario.email || 'N/A'}</td>
                       <td>{funcionario.telefone || 'N/A'}</td>
-                      <td>{funcionario.data_contratacao ? new Date(funcionario.data_contratacao).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                      <td>{funcionario.ativo ? 'Sim' : 'Não'}</td>
                       <td>
-                        <button className="btn btn-info btn-sm me-1" title="Editar" onClick={()=>{
+                        <button className="btn btn-info btn-sm me-1" title="Editar" onClick={() => {
                           setMode("edit");
                           setFuncionario(funcionario);
                           handle_open_funcionario_modal();
                         }}>
                           <Icon name="pencil" />
                         </button>
-                        <button className="btn btn-warning btn-sm me-1" title="Ver Detalhes" onClick={()=>{
+                        <button className="btn btn-warning btn-sm me-1" title="Ver Detalhes" onClick={() => {
                           setMode("view");
                           setFuncionario(funcionario);
                           handle_open_funcionario_modal();
                         }}>
                           <Icon name="eye" />
                         </button>
-                        <button className="btn btn-danger btn-sm" title="Deletar" onClick={() => handle_deactivate_funcionario(funcionario.id)}>
-                          <Icon name="trash" />
-                        </button>
+                        {funcionario.ativo && (
+                          <button className="btn btn-danger btn-sm" title="Desativar" onClick={() => handle_deactivate_funcionario(funcionario.id!)}>
+                            <Icon name="trash" />
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))

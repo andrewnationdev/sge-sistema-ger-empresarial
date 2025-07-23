@@ -6,7 +6,7 @@ interface IGlobalHeader {
 }
 
 export default function GlobalHeader(props) {
-  return (<nav className="navbar navbar-expand-lg navbar-dark bg-primary">
+  return (<nav className="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
     <div className="container-fluid">
       <a className="navbar-brand" href="/dashboard">
         <Icon name="building" marginRight="1rem" />

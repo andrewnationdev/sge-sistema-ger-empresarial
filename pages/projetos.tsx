@@ -145,7 +145,7 @@ export default function ProjetosPage() {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
           },
-          body: JSON.stringify({ ...dataToSend, id: selectedTask.id }), // Inclui o ID para PUT
+          body: JSON.stringify({ ...dataToSend, id: selectedTask.id }),
         });
 
         if (!response.ok) {
@@ -183,7 +183,6 @@ export default function ProjetosPage() {
     }
   };
 
-  // NOVO: Lógica de filtragem com useMemo
   const filteredTarefas = useMemo(() => {
     if (!searchTerm) {
       return tarefas; // Se não houver termo de busca, retorna todas as tarefas
@@ -201,11 +200,38 @@ export default function ProjetosPage() {
   const tarefasEmAndamento = filteredTarefas.filter(tarefa => tarefa.status === "EM ANDAMENTO");
   const tarefasConcluido = filteredTarefas.filter(tarefa => tarefa.status === "CONCLUIDO");
 
+  async function handleDeleteTask(id: number) {
+    try {
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        throw new Error('Usuário não autenticado. Redirecionando para o login.');
+      }
+
+      const response = await fetch(`${API_BASE_URL}?id=${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Erro na request de deletar");
+      }
+
+      await fetchTarefas();
+      handleCloseTaskModal();
+    } catch (err) {
+      throw (err);
+    }
+  }
+
   return (
     <main>
       <GlobalHeader userName={userName} handleLogout={handleLogout} />
       <div className="container mt-5">
-        <h1 className="mb-0">Lista Kanban de Tarefas e Projetos</h1>
+        <h1 className="mb-0">Quadro Kanban de Tarefas e Projetos</h1>
 
         {!loading && !error && <div className="d-flex justify-content-between align-items-center mb-4">
           <div className="input-group" style={{ maxWidth: '300px' }}>
@@ -308,6 +334,7 @@ export default function ProjetosPage() {
           onClose={handleCloseTaskModal}
           task={selectedTask}
           onSave={handleSaveTask}
+          onDelete={() => handleDeleteTask(selectedTask.id)}
         />
       )}
     </main>
