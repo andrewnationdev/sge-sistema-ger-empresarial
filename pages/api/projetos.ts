@@ -22,6 +22,7 @@ export default async function handler(req, res) {
         [titulo, descricao, status, prioridade, data_vencimento, criado_por_usuario_id, responsavel_funcionario_id]
       );
 
+      // @ts-ignore
       res.status(201).json({ message: 'Tarefa adicionada com sucesso!', id: result?.insertId });
     } catch (error) {
       console.error('Erro ao adicionar tarefa:', error);
@@ -51,6 +52,7 @@ export default async function handler(req, res) {
         [titulo, descricao, status, prioridade, data_vencimento, criado_por_usuario_id, responsavel_funcionario_id, id]
       );
 
+      // @ts-ignore
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: 'Tarefa não encontrada.' });
       }
@@ -73,6 +75,7 @@ export default async function handler(req, res) {
         [id]
       );
 
+      // @ts-ignore
       if (result?.affectedRows === 0) {
         return res.status(404).json({ message: 'Tarefa não encontrada.' });
       }

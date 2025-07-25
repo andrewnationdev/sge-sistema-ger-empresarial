@@ -34,6 +34,7 @@ export default async function handler(req, res) {
       );
 
       // Retorna uma resposta de sucesso.
+      // @ts-ignore
       res.status(201).json({ message: 'Usuário registrado com sucesso!', id: result?.insertId });
     } catch (error) {
       console.error('Erro ao registrar usuário:', error);
