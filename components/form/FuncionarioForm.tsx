@@ -104,10 +104,16 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
     }, [selected_user_id, users, mode]);
 
     const handle_change = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value, type } = e.target;
+        let newValue: any = value;
+        if (type === 'checkbox' && e.target instanceof HTMLInputElement) {
+            newValue = e.target.checked;
+        } else if (type === 'number') {
+            newValue = value === '' ? null : Number(value);
+        }
         setFormData((prev_data) => ({
             ...prev_data,
-            [name]: type === 'checkbox' ? checked : (type === 'number' ? (value === '' ? null : Number(value)) : value),
+            [name]: newValue,
         }));
     };
 
@@ -252,7 +258,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                         className="form-check-input"
                         id="ativo"
                         name="ativo"
-                        checked={form_data.ativo ?? true}
+                        checked={!!form_data.ativo}
                         onChange={handle_change}
                         disabled={is_active_disabled}
                     />
