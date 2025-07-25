@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
       const [rows] = await pool.query('SELECT id, nome_usuario, email, senha_hash FROM usuarios WHERE email = ?', [email]);
 
-      if (rows?.length === 0) {
+      if (Array.isArray(rows) && rows?.length === 0) {
         return res.status(401).json({ message: 'Credenciais inválidas.' });
       }
 
