@@ -24,6 +24,10 @@ export default function FuncionariosPage() {
     router.push('/login');
   };
 
+  const handleAccountPage = () => {
+    router.push("/conta")
+  };
+
   const fetchFuncionarios = useCallback(async (searchTerm: string = '') => { // Adicionado searchTerm como parâmetro
     setLoading(true);
     setError(null);
@@ -192,7 +196,7 @@ export default function FuncionariosPage() {
 
   return (
     <main>
-      <GlobalHeader userName={userName} handleLogout={handle_logout} />
+      <GlobalHeader userName={userName} handleLogout={handle_logout} handleAccountPage={handleAccountPage} />
       <div className="container mt-5">
         <h1 className="mb-4">Lista de Funcionários</h1>
         <div className="d-flex justify-content-between align-items-center mb-3">

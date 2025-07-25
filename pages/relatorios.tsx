@@ -85,9 +85,13 @@ export default function RelatoriosPage() {
         fetchReports();
     }, [router]);
 
+    const handleAccountPage = () => {
+        router.push("/conta");
+    };
+
     return (
         <main>
-            <GlobalHeader userName={userName} handleLogout={handleLogout} />
+            <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage}/>
             <div className="container mt-5">
                 <h1 className="mb-4">Relatórios Globais</h1>
 

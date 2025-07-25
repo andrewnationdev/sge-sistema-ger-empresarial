@@ -1,6 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { ITarefa } from '../../types/kanban';
 
+interface IFuncionario {
+  id: number;
+  nome: string;
+  sobrenome: string;
+}
+
+async function getAllFuncionarios(): Promise<IFuncionario[]> {
+  try {
+    const response = await fetch('/api/funcionarios');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Erro HTTP: ${response.status}`);
+    }
+    const funcionarios = await response.json();
+    return funcionarios;
+  } catch (error) {
+    console.error('Erro ao buscar todos os funcionários:', error);
+    return [];
+  }
+}
+
 export default function TaskForm({ initialData, onSubmit, onDelete }: { initialData?: ITarefa | null, onSubmit: (data: Partial<ITarefa>) => void, onDelete: (id: string | number) => void }) {
   const [formData, setFormData] = useState<Partial<ITarefa>>({
     titulo: initialData?.titulo || '',
@@ -11,6 +32,10 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
     criado_por_usuario_id: initialData?.criado_por_usuario_id || null,
     responsavel_funcionario_id: initialData?.responsavel_funcionario_id || null,
   });
+
+  const [funcionarios, setFuncionarios] = useState<IFuncionario[]>([]);
+  const [loadingFuncionarios, setLoadingFuncionarios] = useState(true);
+  const [errorFuncionarios, setErrorFuncionarios] = useState<string | null>(null);
 
   useEffect(() => {
     setFormData({
@@ -24,14 +49,30 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
     });
   }, [initialData]);
 
+  useEffect(() => {
+    async function fetchFuncionarios() {
+      try {
+        setLoadingFuncionarios(true);
+        const data = await getAllFuncionarios();
+        setFuncionarios(data);
+      } catch (error: any) {
+        setErrorFuncionarios(error.message);
+      } finally {
+        setLoadingFuncionarios(false);
+      }
+    }
+
+    fetchFuncionarios();
+  }, []); 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
 
     setFormData((prevData) => ({
       ...prevData,
-
-      [name]: type === 'number' ? (value === '' ? null : Number(value)) : value,
+      [name]: (name === 'responsavel_funcionario_id' || name === 'criado_por_usuario_id')
+                ? (value === '' ? null : Number(value))
+                : value,
     }));
   };
 
@@ -127,15 +168,26 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
 
       <div className="mb-3">
         <label htmlFor="responsavelFuncionarioId" className="form-label">Responsável (ID do Funcionário):</label>
-        <input
-          type="number"
-          className="form-control"
+        <select
+          className="form-select"
           id="responsavelFuncionarioId"
           name="responsavel_funcionario_id"
           value={formData.responsavel_funcionario_id === null ? '' : formData.responsavel_funcionario_id}
           onChange={handleChange}
-          placeholder="Opcional"
-        />
+        >
+          <option value="">Selecione um funcionário (Opcional)</option>
+          {loadingFuncionarios ? (
+            <option disabled>Carregando funcionários...</option>
+          ) : errorFuncionarios ? (
+            <option disabled>Erro ao carregar funcionários: {errorFuncionarios}</option>
+          ) : (
+            funcionarios.map((func) => (
+              <option key={func.id} value={func.id}>
+                {func.nome} {func.sobrenome}
+              </option>
+            ))
+          )}
+        </select>
       </div>
       <button type="submit" className="btn btn-primary">
         {initialData ? "Salvar Alterações" : "Adicionar Tarefa"}

@@ -6,7 +6,8 @@ interface IGlobalHeader {
 }
 
 export default function GlobalHeader(props) {
-  return (<nav className="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
+  return (
+  <nav className="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
     <div className="container-fluid">
       <a className="navbar-brand" href="/dashboard">
         <Icon name="building" marginRight="1rem" />
@@ -47,12 +48,12 @@ export default function GlobalHeader(props) {
         </ul>
         <div className="d-flex align-items-center">
           {props.userName && (
-            <span className="navbar-text text-white me-3">
+            <button className="btn btn-light me-2" onClick={props.handleAccountPage}>
               <Icon name="person" marginRight="0.5rem" />
               Olá, {props.userName}!
-            </span>
+            </button>
           )}
-          <button className="btn btn-outline-light" onClick={props.handleLogout}>
+          <button className="btn btn-danger" onClick={props.handleLogout}>
             <Icon name="box-arrow-right" marginRight="0.5rem" />
             Sair
           </button>

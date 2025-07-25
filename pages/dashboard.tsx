@@ -31,9 +31,13 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
+  const handleAccountPage = () => {
+        router.push("/conta");
+    };
+
   return (
     <div>
-      <GlobalHeader userName={userName} handleLogout={handleLogout}/>
+      <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage}/>
 
       <div className="container mt-5">
         <div className="p-5 bg-white rounded-3 shadow-sm">

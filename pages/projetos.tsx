@@ -119,6 +119,10 @@ export default function ProjetosPage() {
     setSelectedTask(null);
   };
 
+  const handleAccountPage = () => {
+        router.push("/conta");
+    };
+
   const handleSaveTask = async (taskData: Partial<ITarefa>) => {
     try {
       let response;
@@ -229,7 +233,7 @@ export default function ProjetosPage() {
 
   return (
     <main>
-      <GlobalHeader userName={userName} handleLogout={handleLogout} />
+      <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage}/>
       <div className="container mt-5">
         <h1 className="mb-0">Quadro Kanban de Tarefas e Projetos</h1>
 
