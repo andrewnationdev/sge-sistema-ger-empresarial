@@ -4,7 +4,7 @@ import { getCardColorFromStatus } from "../utils/kanban";
 import formatDate from "../utils/dateFormat";
 import { getNomeFuncionarioById } from "../utils/funcionario";
 
-export default function KanbanCard({ card, onClick }: { card: ITarefa, onClick: () => {} }) {
+export default function KanbanCard({ card, onClick }: { card: ITarefa, onClick: () => void }) {
   const [funcionario, setFuncionario] = useState(null);
 
   useEffect(() => {

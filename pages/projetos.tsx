@@ -293,7 +293,7 @@ export default function ProjetosPage() {
                       key={tarefa.id}
                       card={tarefa}
                       onClick={() => {
-                        handleOpenEditModal(tarefa);
+                        handleOpenEditModal(tarefa)
                       }}
                     />
                   ))}
