@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         [nome_usuario]
       );
 
-      if (rows.length === 0) {
+      if (rows?.length === 0) {
         return res.status(404).json({ message: 'Usuário não encontrado.' });
       }
 

@@ -22,7 +22,7 @@ export default async function handler(req, res) {
         [titulo, descricao, status, prioridade, data_vencimento, criado_por_usuario_id, responsavel_funcionario_id]
       );
 
-      res.status(201).json({ message: 'Tarefa adicionada com sucesso!', id: result.insertId });
+      res.status(201).json({ message: 'Tarefa adicionada com sucesso!', id: result?.insertId });
     } catch (error) {
       console.error('Erro ao adicionar tarefa:', error);
       res.status(500).json({ message: 'Erro interno do servidor', error: error.message });

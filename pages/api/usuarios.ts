@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       );
 
       // Retorna uma resposta de sucesso.
-      res.status(201).json({ message: 'Usuário registrado com sucesso!', id: result.insertId });
+      res.status(201).json({ message: 'Usuário registrado com sucesso!', id: result?.insertId });
     } catch (error) {
       console.error('Erro ao registrar usuário:', error);
       // Verifica se o erro é devido a uma entrada duplicada (nome_usuario ou email UNIQUE).

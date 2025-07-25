@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         [nome_usuario, email, senha_hash]
       );
 
-      res.status(201).json({ message: 'Usuário registado com sucesso!', id: result.insertId });
+      res.status(201).json({ message: 'Usuário registado com sucesso!', id: result?.insertId });
     } catch (error) {
       console.error('Erro ao registar usuário:', error);
       if (error.code === 'ER_DUP_ENTRY') {
