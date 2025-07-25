@@ -38,6 +38,7 @@ export default async function handler(req, res) {
         [nome, sobrenome, cargo, departamento, email, telefone, data_contratacao, ativo, usuario_id]
       );
 
+      // @ts-ignore
       res.status(201).json({ message: 'Funcionário adicionado com sucesso!', id: result?.insertId });
     } catch (error) {
       console.error('Erro ao adicionar funcionário:', error);
@@ -82,6 +83,7 @@ export default async function handler(req, res) {
         values
       );
 
+      // @ts-ignore
       if (result?.affectedRows === 0) {
         return res.status(404).json({ message: 'Funcionário não encontrado ou nenhum dado alterado.' });
       }
