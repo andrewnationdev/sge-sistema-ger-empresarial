@@ -128,7 +128,11 @@ export default function FuncionariosPage() {
       const data_to_send = {
         ...funcionario_data,
         ativo: funcionario_data.ativo !== undefined ? funcionario_data.ativo : true,
-        usuario_id: funcionario_data.usuario_id === null || funcionario_data.usuario_id === '' ? null : Number(funcionario_data.usuario_id),
+        usuario_id: 
+          funcionario_data.usuario_id === null ||
+          (typeof funcionario_data.usuario_id === 'string' && funcionario_data.usuario_id === '')
+            ? null
+            : Number(funcionario_data.usuario_id),
       };
 
       if (is_update) {
