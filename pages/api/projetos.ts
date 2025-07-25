@@ -73,7 +73,7 @@ export default async function handler(req, res) {
         [id]
       );
 
-      if (result.affectedRows === 0) {
+      if (result?.affectedRows === 0) {
         return res.status(404).json({ message: 'Tarefa não encontrada.' });
       }
 
