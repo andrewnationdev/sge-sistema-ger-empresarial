@@ -138,8 +138,16 @@ export default function ProjetosPage() {
         status: taskData.status,
         prioridade: taskData.prioridade,
         data_vencimento: taskData.data_vencimento === '' ? null : taskData.data_vencimento,
-        criado_por_usuario_id: taskData.criado_por_usuario_id === null || taskData.criado_por_usuario_id === '' ? null : Number(taskData.criado_por_usuario_id),
-        responsavel_funcionario_id: taskData.responsavel_funcionario_id === null || taskData.responsavel_funcionario_id === '' ? null : Number(taskData.responsavel_funcionario_id),
+        criado_por_usuario_id:
+          taskData.criado_por_usuario_id === null ||
+          (typeof taskData.criado_por_usuario_id === 'string' && taskData.criado_por_usuario_id === '')
+            ? null
+            : Number(taskData.criado_por_usuario_id),
+        responsavel_funcionario_id:
+          taskData.responsavel_funcionario_id === null ||
+          (typeof taskData.responsavel_funcionario_id === 'string' && taskData.responsavel_funcionario_id === '')
+            ? null
+            : Number(taskData.responsavel_funcionario_id),
       };
 
       if (selectedTask) {
