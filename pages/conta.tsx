@@ -1,4 +1,3 @@
-// pages/conta.js
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import GlobalHeader from '../components/GlobalHeader';
@@ -7,11 +6,12 @@ export default function ContaPage() {
     const router = useRouter();
 
     const [userData, setUserData] = useState({
-        id: 1,
+        id: null,
         nome_usuario: '',
         email: '',
         senha: ''
     });
+    const [initialUsername, setInitialUsername] = useState('');
     const [userName, setUserName] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -28,12 +28,14 @@ export default function ContaPage() {
         if (userString) {
             try {
                 const user = JSON.parse(userString);
-                setUserName(user.nome_usuario || user.email || 'Usuário');
-                setUserData(prevData => ({
-                    ...prevData,
-                    id: 1
-                }));
-            } catch (e) {
+                if (user.nome_usuario) {
+                    setUserName(user.nome_usuario);
+                    setInitialUsername(user.nome_usuario);
+                } else {
+                    setError("Nome de usuário não encontrado no localStorage.");
+                    setLoading(false);
+                }
+            } catch (e: any) {
                 console.error("Erro ao analisar dados do usuário do localStorage:", e);
                 setError("Erro ao carregar informações do usuário.");
                 setLoading(false);
@@ -46,24 +48,28 @@ export default function ContaPage() {
 
     useEffect(() => {
         const fetchUserDataFromApi = async () => {
-            if (!userData.id) {
+            if (!initialUsername) {
                 setLoading(false);
                 return;
             }
 
             try {
                 setLoading(true);
-                const response = await fetch(`/api/usuarios?id=${userData.id}`);
+                const response = await fetch(`/api/usuario_by_nome?nome_usuario=${initialUsername}`);
                 if (!response.ok) {
-                    throw new Error('Falha ao buscar dados do usuário.');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Falha ao buscar dados do usuário.');
                 }
                 const data = await response.json();
-                setUserData(prevData => ({
-                    ...prevData,
+
+                setUserData({
+                    id: data.id,
                     nome_usuario: data.nome_usuario,
-                    email: data.email
-                }));
-            } catch (err) {
+                    email: data.email,
+                    senha: ''
+                });
+
+            } catch (err: any) {
                 setError('Erro ao carregar dados do usuário: ' + err.message);
             } finally {
                 setLoading(false);
@@ -71,9 +77,9 @@ export default function ContaPage() {
         };
 
         fetchUserDataFromApi();
-    }, [userData.id]);
+    }, [initialUsername]);
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setUserData(prevData => ({
             ...prevData,
@@ -81,13 +87,13 @@ export default function ContaPage() {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setMessage('');
         setError('');
 
         if (!userData.id) {
-            setError("ID do usuário não disponível para atualização.");
+            setError("ID do usuário não disponível para atualização. Tente recarregar a página.");
             return;
         }
 
@@ -113,16 +119,17 @@ export default function ContaPage() {
             setMessage(result.message || 'Dados atualizados com sucesso!');
             setUserData(prevData => ({ ...prevData, senha: '' }));
 
+            // Atualiza o localStorage e o userName exibido
             const userString = localStorage.getItem('user');
             if (userString) {
                 const user = JSON.parse(userString);
                 user.nome_usuario = userData.nome_usuario;
                 user.email = userData.email;
                 localStorage.setItem('user', JSON.stringify(user));
-                setUserName(userData.nome_usuario || userData.email);
+                setUserName(userData.nome_usuario);
             }
 
-        } catch (err) {
+        } catch (err: any) {
             setError('Erro ao atualizar: ' + err.message);
         }
     };
