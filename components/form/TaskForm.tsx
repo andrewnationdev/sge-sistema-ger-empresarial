@@ -5,6 +5,7 @@ interface IFuncionario {
   id: number;
   nome: string;
   sobrenome: string;
+  ativo?:boolean;
 }
 
 async function getAllFuncionarios(): Promise<IFuncionario[]> {
@@ -54,7 +55,7 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
       try {
         setLoadingFuncionarios(true);
         const data = await getAllFuncionarios();
-        setFuncionarios(data);
+        setFuncionarios(data.filter((f:IFuncionario) => f!.ativo));
       } catch (error: any) {
         setErrorFuncionarios(error.message);
       } finally {

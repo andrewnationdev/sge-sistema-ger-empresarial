@@ -30,7 +30,7 @@ export default function FuncionarioModal({ onClose, onSave, mode, funcionarioToE
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 1000
+      zIndex: 9999
     }}>
       <div style={{
         backgroundColor: 'white',

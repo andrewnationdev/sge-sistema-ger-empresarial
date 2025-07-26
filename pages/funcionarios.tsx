@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import GlobalHeader from '../components/GlobalHeader';
 import Icon from '../components/Icon';
 import FuncionarioModal from '../components/form/FuncionarioModal';
 import { IFuncionario } from '../types/usuario';
+import { formatPhoneNumber } from '../utils/mascara';
 
 const API_FUNCIONARIOS_URL = '/api/funcionarios';
 
@@ -14,9 +15,9 @@ export default function FuncionariosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [show_funcionario_modal, setShowFuncionarioModal] = useState(false);
-  const [funcionario, setFuncionario] = useState<IFuncionario | null>(null); // Pode ser null para criação
+  const [funcionario, setFuncionario] = useState<IFuncionario | null>(null);
   const [mode, setMode] = useState<"create" | "edit" | "view">("create");
-  const [search_term, setSearchTerm] = useState<string>(''); // Novo estado para o termo de busca
+  const [search_term, setSearchTerm] = useState<string>('');
 
   const handle_logout = () => {
     localStorage.removeItem('token');
@@ -28,7 +29,7 @@ export default function FuncionariosPage() {
     router.push("/conta")
   };
 
-  const fetchFuncionarios = useCallback(async (searchTerm: string = '') => { // Adicionado searchTerm como parâmetro
+  const fetchFuncionarios = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -39,14 +40,7 @@ export default function FuncionariosPage() {
     }
 
     try {
-      const queryParams = new URLSearchParams();
-      if (searchTerm) {
-        queryParams.append('search', searchTerm);
-      }
-
-      const url = `${API_FUNCIONARIOS_URL}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-
-      const response = await fetch(url, {
+      const response = await fetch(API_FUNCIONARIOS_URL, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -82,8 +76,26 @@ export default function FuncionariosPage() {
   }, [router]);
 
   useEffect(() => {
-    fetchFuncionarios(search_term); // Chama fetchFuncionarios com o termo de busca
-  }, [fetchFuncionarios, search_term]); // Re-executa quando search_term muda
+    fetchFuncionarios();
+  }, [fetchFuncionarios]);
+
+  const filteredFuncionarios = useMemo(() => {
+    if (!search_term) {
+      return funcionarios.filter(f => f.ativo);
+    }
+    const lowercasedSearchTerm = search_term.toLowerCase();
+    return funcionarios.filter((f) => {
+      if (!f.ativo) return false; 
+
+      return (
+        f.nome.toLowerCase().includes(lowercasedSearchTerm) ||
+        f.sobrenome.toLowerCase().includes(lowercasedSearchTerm) ||
+        (f.email && f.email.toLowerCase().includes(lowercasedSearchTerm)) ||
+        (f.cargo && f.cargo.toLowerCase().includes(lowercasedSearchTerm)) ||
+        (f.departamento && f.departamento.toLowerCase().includes(lowercasedSearchTerm))
+      );
+    });
+  }, [funcionarios, search_term]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -109,9 +121,9 @@ export default function FuncionariosPage() {
 
   const handle_close_funcionario_modal = () => {
     setShowFuncionarioModal(false);
-    setFuncionario(null); // Limpa o funcionário selecionado ao fechar
-    setMode("create"); // Reseta o modo para criação
-    fetchFuncionarios(search_term); // Recarrega a lista após fechar o modal
+    setFuncionario(null);
+    setMode("create");
+    fetchFuncionarios();
   };
 
   const handle_save_funcionario = async (funcionario_data: Partial<IFuncionario>) => {
@@ -154,7 +166,7 @@ export default function FuncionariosPage() {
       }
 
       alert(`Funcionário ${is_update ? 'atualizado' : 'cadastrado'} com sucesso!`);
-      handle_close_funcionario_modal(); // Fecha o modal e recarrega a lista
+      handle_close_funcionario_modal();
     } catch (err: any) {
       console.error('Erro ao salvar funcionário:', err);
       alert(`Erro ao salvar funcionário: ${err.message || 'Erro desconhecido'}`);
@@ -191,7 +203,7 @@ export default function FuncionariosPage() {
       }
 
       alert('Funcionário desativado com sucesso!');
-      fetchFuncionarios(search_term); // Recarrega a lista
+      fetchFuncionarios();
     } catch (err: any) {
       console.error('Erro ao desativar funcionário:', err);
       alert(`Erro ao desativar funcionário: ${err.message || 'Erro desconhecido'}`);
@@ -207,14 +219,14 @@ export default function FuncionariosPage() {
           <div className="col-md-4">
             <input
               type="text"
-              className="form-control"
+              className="form-control rounded-pill"
               placeholder="Buscar por nome, email, cargo..."
               value={search_term}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="btn btn-primary" onClick={() => {
-            setFuncionario(null); // Garante que é null para criar
+          <button className="btn btn-primary rounded-pill" onClick={() => {
+            setFuncionario(null);
             setMode("create");
             handle_open_funcionario_modal();
           }}>
@@ -248,34 +260,32 @@ export default function FuncionariosPage() {
                   <th scope="col">Cargo</th>
                   <th scope="col">Email</th>
                   <th scope="col">Telefone</th>
-                  <th scope="col">Ativo</th>
                   <th scope="col">Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {funcionarios.length === 0 ? (
+                {filteredFuncionarios.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="text-center">Nenhum funcionário encontrado.</td>
                   </tr>
                 ) : (
-                  funcionarios.filter((f) => f.ativo).map((funcionario) => (
+                  filteredFuncionarios.map((funcionario) => (
                     <tr key={funcionario.id}>
                       <th scope="row">{funcionario.id}</th>
                       <td>{funcionario.nome} {funcionario.sobrenome}</td>
                       <td>{funcionario.departamento || 'N/A'}</td>
                       <td>{funcionario.cargo || 'N/A'}</td>
                       <td>{funcionario.email || 'N/A'}</td>
-                      <td>{funcionario.telefone || 'N/A'}</td>
-                      <td>{funcionario.ativo ? 'Sim' : 'Não'}</td>
+                      <td>{formatPhoneNumber(funcionario.telefone) || 'N/A'}</td>
                       <td>
-                        <button className="btn btn-info btn-sm me-1" title="Editar" onClick={() => {
+                        <button className="btn btn-dark btn-sm me-1 rounded-pill" title="Editar" onClick={() => {
                           setMode("edit");
                           setFuncionario(funcionario);
                           handle_open_funcionario_modal();
                         }}>
                           <Icon name="pencil" />
                         </button>
-                        <button className="btn btn-warning btn-sm me-1" title="Ver Detalhes" onClick={() => {
+                        <button className="btn btn-primary btn-sm me-1 rounded-pill" title="Ver Detalhes" onClick={() => {
                           setMode("view");
                           setFuncionario(funcionario);
                           handle_open_funcionario_modal();
@@ -283,7 +293,7 @@ export default function FuncionariosPage() {
                           <Icon name="eye" />
                         </button>
                         {funcionario.ativo && (
-                          <button className="btn btn-danger btn-sm" title="Desativar" onClick={() => handle_deactivate_funcionario(funcionario.id!)}>
+                          <button className="btn btn-danger btn-sm rounded-pill" title="Desativar" onClick={() => handle_deactivate_funcionario(funcionario.id!)}>
                             <Icon name="trash" />
                           </button>
                         )}

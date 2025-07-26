@@ -135,7 +135,7 @@ export default function RelatoriosPage() {
                                     <div className="card-header">Tarefas Atrasadas</div>
                                     <div className="card-body">
                                         <h5 className="card-title">{reportData.overdueTasks.total_tarefas_atrasadas || 0}</h5>
-                                        <p className="card-text">Tarefas com vencimento no passado e não concluídas.</p>
+                                        <p className="card-text">Tarefas atrasadas e não concluídas.</p>
                                     </div>
                                 </div>
                             </div>

@@ -146,7 +146,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                         <div className="alert alert-danger">{users_error}</div>
                     ) : (
                         <select
-                            className="form-select"
+                            className="form-select rounded-pill"
                             id="select_user"
                             value={selected_user_id || ''}
                             onChange={handle_user_select_change}
@@ -168,7 +168,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="nome" className="form-label">Nome:</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="nome"
                     name="nome"
                     value={form_data.nome || ''}
@@ -181,7 +181,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="sobrenome" className="form-label">Sobrenome:</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="sobrenome"
                     name="sobrenome"
                     value={form_data.sobrenome || ''}
@@ -194,7 +194,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="email" className="form-label">Email:</label>
                 <input
                     type="email"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="email"
                     name="email"
                     value={form_data.email || ''}
@@ -206,7 +206,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="cargo" className="form-label">Cargo:</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="cargo"
                     name="cargo"
                     value={form_data.cargo || ''}
@@ -218,7 +218,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="departamento" className="form-label">Departamento:</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="departamento"
                     name="departamento"
                     value={form_data.departamento || ''}
@@ -230,7 +230,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="telefone" className="form-label">Telefone:</label>
                 <input
                     type="text"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="telefone"
                     name="telefone"
                     value={form_data.telefone || ''}
@@ -242,7 +242,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <label htmlFor="data_contratacao" className="form-label">Data de Contratação:</label>
                 <input
                     type="date"
-                    className="form-control"
+                    className="form-control rounded-pill"
                     id="data_contratacao"
                     name="data_contratacao"
                     value={form_data.data_contratacao || ''}
@@ -255,7 +255,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 <div className="form-check mb-3">
                     <input
                         type="checkbox"
-                        className="form-check-input"
+                        className="form-check-input rounded-pill"
                         id="ativo"
                         name="ativo"
                         checked={!!form_data.ativo}
@@ -276,8 +276,8 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                     }}>OK</button>
                 ) : (
                     <>
-                        <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={is_submitting}>Cancelar</button>
-                        <button type="submit" className="btn btn-success" disabled={is_submitting}>
+                        <button type="button" className="btn btn-secondary rounded-pill" onClick={onCancel} disabled={is_submitting}>Cancelar</button>
+                        <button type="submit" className="btn btn-success rounded-pill" disabled={is_submitting}>
                             {is_submitting ? 'Salvando...' : (mode === 'create' ? 'Cadastrar Funcionário' : 'Atualizar Funcionário')}
                         </button>
                     </>

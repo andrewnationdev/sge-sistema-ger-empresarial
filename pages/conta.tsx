@@ -17,6 +17,12 @@ export default function ContaPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        router.push('/login');
+    };
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -98,7 +104,7 @@ export default function ContaPage() {
         }
 
         try {
-            const response = await fetch(`/api/usuarios?id=${userData.id}`, {
+            const response = await fetch(`/api/gerenciar_conta?id=${userData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,7 +147,7 @@ export default function ContaPage() {
     if (loading) {
         return (
             <div>
-                <GlobalHeader handleAccountPage={handleAccountPage} userName={userName} />
+                <GlobalHeader handleAccountPage={handleAccountPage} handleLogout={handleLogout} userName={userName} />
                 <div className="container mt-5">
                     <div className="alert alert-info" role="alert">
                         Carregando dados do usuário...
@@ -180,6 +186,7 @@ export default function ContaPage() {
                                 value={userData.nome_usuario}
                                 onChange={handleChange}
                                 required
+                                disabled
                             />
                         </div>
                         <div className="mb-3">

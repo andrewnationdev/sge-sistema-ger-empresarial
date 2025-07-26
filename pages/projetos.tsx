@@ -249,16 +249,15 @@ export default function ProjetosPage() {
           <div className="input-group" style={{ maxWidth: '300px' }}>
             <input
               type="text"
-              className="form-control"
+              className="form-control rounded-pill"
               placeholder="Buscar tarefas..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <span className="input-group-text"><i className="bi bi-search"></i></span>
           </div>
           <div className="d-flex justify-content-end mb-3">
             {!loading && !error && (
-              <button className="btn btn-primary" onClick={handleOpenAddModal}>
+              <button className="btn btn-primary rounded-pill" onClick={handleOpenAddModal}>
                 <i className="bi bi-plus-lg"></i> Adicionar Tarefa
               </button>
             )}
