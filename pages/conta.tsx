@@ -158,8 +158,8 @@ export default function ContaPage() {
     }
 
     return (
-        <div>
-            <GlobalHeader handleAccountPage={handleAccountPage} userName={userName} />
+        <div> 
+            <GlobalHeader handleLogout={handleLogout} handleAccountPage={handleAccountPage} userName={userName} />
             <div className="container mt-5">
                 <div className="card shadow-sm p-4 mx-auto" style={{ maxWidth: '500px', borderRadius: '15px' }}>
                     <h2 className="card-title text-center mb-4">Minha Conta</h2>
