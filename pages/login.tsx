@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import GlobalHeader from '../components/GlobalHeader';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
