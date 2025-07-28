@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface IGlobalHeader {
   userName: string;
-  handleLogout: () => {};
+  handleLogout: () => void;
   handleAccountPage: () => void;
   isDashboard?: boolean;
 }
