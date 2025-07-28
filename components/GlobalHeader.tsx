@@ -6,6 +6,7 @@ interface IGlobalHeader {
   userName: string;
   handleLogout: () => {};
   handleAccountPage: () => void;
+  isDashboard?: boolean;
 }
 
 export default function GlobalHeader(props: IGlobalHeader) {

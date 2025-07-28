@@ -44,8 +44,8 @@ export default function RegisterPage() {
   };
 
   return (
-    // Mantendo as classes de estilo existentes da sua página de login
     <div className="login-page">
+      <GlobalHeader userName={""}/>
       <div className="card">
         <h2 className="card-header">SGE - Registro de Usuário</h2>
         <form onSubmit={handleSubmit} className="card-body">
