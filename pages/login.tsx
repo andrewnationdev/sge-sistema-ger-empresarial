@@ -47,7 +47,7 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <GlobalHeader userName={""}/>
-      <div className="card">
+      <div className="card mt-4">
         <h2 className="card-header">SGE - Sistema de Gerenciamento Empresarial</h2>
         <form onSubmit={handleSubmit} className="card-body">
           <div className="form-group">

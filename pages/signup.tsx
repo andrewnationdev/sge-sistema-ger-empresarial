@@ -46,7 +46,7 @@ export default function RegisterPage() {
   return (
     <div className="login-page">
       <GlobalHeader userName={""}/>
-      <div className="card">
+      <div className="card mt-4">
         <h2 className="card-header">SGE - Registro de Usuário</h2>
         <form onSubmit={handleSubmit} className="card-body">
           {/* Campo Nome de Usuário */}
