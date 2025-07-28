@@ -1,64 +1,55 @@
 import Icon from "./Icon";
+import { Navbar, Nav, Container } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface IGlobalHeader {
   userName: string;
   handleLogout: () => {};
+  handleAccountPage: () => void;
 }
 
-export default function GlobalHeader(props) {
+export default function GlobalHeader(props: IGlobalHeader) {
   return (
-  <nav className="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-    <div className="container-fluid">
-      <a className="navbar-brand" href="/dashboard">
-        <Icon name="building" marginRight="1rem" />
-        Sistema de Gerenciamento Empresarial</a>
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-          <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="/dashboard">
+    <Navbar expand="lg" variant="dark" bg="primary" sticky="top">
+      <Container fluid>
+        <Navbar.Brand href="/dashboard">
+          <Icon name="building" marginRight="1rem" />
+          Sistema de Gerenciamento Empresarial
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav"> 
+          <Nav className="me-auto mb-2 mb-lg-0">
+            <Nav.Link href="/dashboard">
               <Icon name="house" marginRight="0.5rem" />
-              Início</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="/funcionarios">
+              Início
+            </Nav.Link>
+            <Nav.Link href="/funcionarios">
               <Icon name="person-vcard" marginRight="0.5rem" />
-              Funcionários</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link active" href="/projetos">
+              Funcionários
+            </Nav.Link>
+            <Nav.Link href="/projetos">
               <Icon name="kanban" marginRight="0.5rem" />
-              Projetos</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link active" href="/relatorios">
+              Projetos
+            </Nav.Link>
+            <Nav.Link href="/relatorios">
               <Icon name="graph-up-arrow" marginRight="0.5rem" />
-              Relatórios</a>
-          </li>
-        </ul>
-        <div className="d-flex align-items-center">
-          {props.userName && (
-            <button className="btn btn-light me-2" onClick={props.handleAccountPage}>
-              <Icon name="person" marginRight="0.5rem" />
-              Olá, {props.userName}!
-            </button>
-          )}
-          <button className="btn btn-danger" onClick={props.handleLogout}>
-            <Icon name="box-arrow-right" marginRight="0.5rem" />
-            Sair
-          </button>
-        </div>
-      </div>
-    </div>
-  </nav>)
+              Relatórios
+            </Nav.Link>
+          </Nav>
+          <Nav> 
+            {props.userName && (
+              <Nav.Link as="button" className="btn btn-light me-2" onClick={props.handleAccountPage}>
+                <Icon name="person" marginRight="0.5rem" />
+                Olá, {props.userName}!
+              </Nav.Link>
+            )}
+            <Nav.Link as="button" className="btn btn-danger" onClick={props.handleLogout}>
+              <Icon name="box-arrow-right" marginRight="0.5rem" />
+              Sair
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
 }
