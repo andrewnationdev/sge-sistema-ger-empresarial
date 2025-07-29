@@ -89,9 +89,17 @@ export default function RelatoriosPage() {
         router.push("/conta");
     };
 
+    function parseItemStatus(status: string) {
+        return status === "CONCLUIDO" ? "CONCLUÍDO" : status;
+    }
+
+    function parseItemPriority(status: string) {
+        return status === "MEDIA" ? "MÉDIA" : status;
+    }
+
     return (
         <main>
-            <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage}/>
+            <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage} />
             <div className="container mt-5">
                 <h1 className="mb-4">Relatórios Globais</h1>
 
@@ -151,7 +159,7 @@ export default function RelatoriosPage() {
                                             {reportData.taskStatusCounts.length > 0 ? (
                                                 reportData.taskStatusCounts.map((item, index) => (
                                                     <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                                        {item.status || 'N/A'}
+                                                        {parseItemStatus(item.status) || 'N/A'}
                                                         <span className="badge bg-secondary rounded-pill">{item.total}</span>
                                                     </li>
                                                 ))
@@ -170,7 +178,7 @@ export default function RelatoriosPage() {
                                             {reportData.taskPriorityCounts.length > 0 ? (
                                                 reportData.taskPriorityCounts.map((item, index) => (
                                                     <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                                                        {item.prioridade || 'N/A'}
+                                                        {parseItemPriority(item.prioridade) || 'N/A'}
                                                         <span className="badge bg-secondary rounded-pill">{item.total}</span>
                                                     </li>
                                                 ))
@@ -227,8 +235,8 @@ export default function RelatoriosPage() {
                                 <div className="card">
                                     <div className="card-header">Estatísticas de Funcionários</div>
                                     <div className="card-body">
-                                        <p>Total de funcionários: **{reportData.employeeStats.total_funcionarios || 0}**</p>
-                                        <p>Funcionários inativos: **{reportData.employeeStats.funcionarios_inativos || 0}**</p>
+                                        <p>Total de funcionários Ativos: <strong>{reportData.employeeStats.total_funcionarios - reportData.employeeStats.funcionarios_inativos || 0}</strong></p>
+                                        <p>Funcionários inativos: <strong>{reportData.employeeStats.funcionarios_inativos || 0}</strong></p>
                                     </div>
                                 </div>
                             </div>

@@ -40,12 +40,12 @@ export default function GlobalHeader(props: IGlobalHeader) {
             </Nav>
             <Nav>
               {props.userName && (
-                <Nav.Link as="button" className="btn btn-light me-2" onClick={props.handleAccountPage}>
+                <Nav.Link as="button" className="btn btn-dark me-2 active" onClick={props.handleAccountPage}>
                   <Icon name="person" marginRight="0.5rem" />
                   Olá, {props.userName}!
                 </Nav.Link>
               )}
-              <Nav.Link as="button" className="btn btn-danger" onClick={props.handleLogout}>
+              <Nav.Link as="button" className="btn btn-danger active" onClick={props.handleLogout}>
                 <Icon name="box-arrow-right" marginRight="0.5rem" />
                 Sair
               </Nav.Link>

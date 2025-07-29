@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { IFuncionario, IUsuario } from '../../types/usuario';
+import { throwMessage } from '../../utils/toast';
 
 interface FuncionarioFormProps {
     onSubmit: (data: Partial<IFuncionario>) => void;
@@ -271,7 +272,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
             <div className="d-flex justify-content-end gap-2 mt-4">
                 {mode === 'view' ? (
                     <button type="button" className="btn btn-primary" onClick={() => {
-                        alert('Para editar, reabra a modal no modo de edição.');
+                        throwMessage('Para editar, reabra a modal no modo de edição.');
                         onCancel();
                     }}>OK</button>
                 ) : (

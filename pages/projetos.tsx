@@ -4,6 +4,7 @@ import GlobalHeader from '../components/GlobalHeader';
 import KanbanCard from '../components/KanbanCard';
 import TaskModal from '../components/form/TaskModal';
 import { ITarefa } from '../types/kanban';
+import { throwError } from '../utils/toast';
 
 const API_BASE_URL = '/api/projetos';
 
@@ -188,7 +189,7 @@ export default function ProjetosPage() {
       handleCloseTaskModal();
     } catch (err: any) {
       console.error('Erro ao salvar tarefa:', err);
-      alert(`Ocorreu um erro ao salvar a tarefa: ${err.message || 'Erro desconhecido'}`);
+      throwError(`Ocorreu um erro ao salvar a tarefa: ${err.message || 'Erro desconhecido'}`);
       if (err.message === 'Usuário não autenticado. Redirecionando para o login.') {
         router.push('/login');
       }

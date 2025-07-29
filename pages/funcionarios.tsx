@@ -5,6 +5,7 @@ import Icon from '../components/Icon';
 import FuncionarioModal from '../components/form/FuncionarioModal';
 import { IFuncionario } from '../types/usuario';
 import { formatPhoneNumber } from '../utils/mascara';
+import { throwError, throwSuccess } from '../utils/toast';
 
 const API_FUNCIONARIOS_URL = '/api/funcionarios';
 
@@ -165,11 +166,11 @@ export default function FuncionariosPage() {
         throw new Error(error_data.message || `Falha ao ${is_update ? 'atualizar' : 'cadastrar'} funcionário.`);
       }
 
-      alert(`Funcionário ${is_update ? 'atualizado' : 'cadastrado'} com sucesso!`);
+      throwSuccess(`Funcionário ${is_update ? 'atualizado' : 'cadastrado'} com sucesso!`);
       handle_close_funcionario_modal();
     } catch (err: any) {
       console.error('Erro ao salvar funcionário:', err);
-      alert(`Erro ao salvar funcionário: ${err.message || 'Erro desconhecido'}`);
+      throwError(`Erro ao salvar funcionário: ${err.message || 'Erro desconhecido'}`);
     }
   };
 
@@ -202,11 +203,11 @@ export default function FuncionariosPage() {
         throw new Error(error_data.message || 'Falha ao desativar funcionário.');
       }
 
-      alert('Funcionário desativado com sucesso!');
+      throwSuccess('Funcionário desativado com sucesso!');
       fetchFuncionarios();
     } catch (err: any) {
       console.error('Erro ao desativar funcionário:', err);
-      alert(`Erro ao desativar funcionário: ${err.message || 'Erro desconhecido'}`);
+      throwError(`Erro ao desativar funcionário: ${err.message || 'Erro desconhecido'}`);
     }
   };
 

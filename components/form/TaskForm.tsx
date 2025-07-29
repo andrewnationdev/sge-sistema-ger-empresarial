@@ -89,7 +89,7 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
         <label htmlFor="titulo" className="form-label">Título da Tarefa:</label>
         <input
           type="text"
-          className="form-control"
+          className="form-control rounded-pill"
           id="titulo"
           name="titulo"
           value={formData.titulo || ''}
@@ -113,7 +113,7 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
       <div className="mb-3">
         <label htmlFor="status" className="form-label">Status:</label>
         <select
-          className="form-select"
+          className="form-select rounded-pill"
           id="status"
           name="status"
           value={formData.status || 'A FAZER'}
@@ -129,7 +129,7 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
       <div className="mb-3">
         <label htmlFor="prioridade" className="form-label">Prioridade:</label>
         <select
-          className="form-select"
+          className="form-select rounded-pill"
           id="prioridade"
           name="prioridade"
           value={formData.prioridade || 'BAIXA'}
@@ -146,7 +146,7 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
         <label htmlFor="dataVencimento" className="form-label">Data de Vencimento:</label>
         <input
           type="date"
-          className="form-control"
+          className="form-control rounded-pill"
           id="dataVencimento"
           name="data_vencimento"
           value={formData.data_vencimento || ''}
@@ -154,23 +154,23 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
         />
       </div>
 
-      <div className="mb-3">
+      {/*<div className="mb-3">
         <label htmlFor="criadoPorUsuarioId" className="form-label">Criado Por (ID do Usuário):</label>
         <input
           type="number"
-          className="form-control"
+          className="form-control rounded-pill"
           id="criadoPorUsuarioId"
           name="criado_por_usuario_id"
           value={formData.criado_por_usuario_id === null ? '' : formData.criado_por_usuario_id}
           onChange={handleChange}
           placeholder="Opcional"
         />
-      </div>
+      </div>*/}
 
       <div className="mb-3">
         <label htmlFor="responsavelFuncionarioId" className="form-label">Responsável (ID do Funcionário):</label>
         <select
-          className="form-select"
+          className="form-select rounded-pill"
           id="responsavelFuncionarioId"
           name="responsavel_funcionario_id"
           value={formData.responsavel_funcionario_id === null ? '' : formData.responsavel_funcionario_id}
@@ -190,10 +190,10 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
           )}
         </select>
       </div>
-      <button type="submit" className="btn btn-primary">
+      <button type="submit" className="btn btn-primary rounded-pill">
         {initialData ? "Salvar Alterações" : "Adicionar Tarefa"}
       </button>
-      {initialData && <button type="button" className="btn btn-danger" onClick={() => onDelete(initialData.id)}>
+      {initialData && <button type="button" className="btn btn-danger rounded-pill" onClick={() => onDelete(initialData.id)}>
         Deletar Item
       </button>}
     </form>
