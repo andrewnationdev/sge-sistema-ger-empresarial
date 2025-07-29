@@ -42,7 +42,7 @@ export default function DashboardPage() {
       <div className="container mt-5">
         <div className="p-5 bg-white rounded-3 shadow-sm">
           <h1 className="display-4">Bem-vindo ao Sistema de Gerenciamento Empresarial</h1>
-          <p className="lead">Esta é a área principal do seu dashboard. Em breve, você verá informações e ferramentas importantes aqui.</p>
+          <p className="lead">Esta é a área principal do seu dashboard.</p>
           <hr className="my-4" />
           <p>Use a barra de navegação acima para acessar as diferentes seções do sistema.</p>
         </div>

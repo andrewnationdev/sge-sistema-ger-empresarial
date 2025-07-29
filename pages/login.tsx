@@ -1,8 +1,7 @@
-// pages/login.js
-
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import GlobalHeader from '../components/GlobalHeader';
+import { throwError } from '../utils/toast';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -28,13 +27,11 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Login bem-sucedido
-        // Armazena o token e os dados do utilizador (opcional)
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user)); // Armazena dados básicos do utilizador
-        router.push('/dashboard'); // Redireciona para uma página de dashboard após o login
+        localStorage.setItem('user', JSON.stringify(data.user)); 
+        router.push('/dashboard');
       } else {
-        // Erro no login
+        throwError('Erro ao fazer login. Tente novamente.');
         setError(data.message || 'Erro ao fazer login. Tente novamente.');
       }
     } catch (err) {
@@ -48,15 +45,15 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <GlobalHeader userName={""}/>
-      <div className="card mt-4">
-        <h2 className="card-header">SGE - Sistema de Gerenciamento Empresarial</h2>
+      <div className="card shadow-sm p-4 mt-4 mx-auto" style={{ maxWidth: '500px', borderRadius: '15px' }}>
+        <h2 className="card-header">Entre no SGE</h2>
         <form onSubmit={handleSubmit} className="card-body">
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
-              className="form-control"
+              className="form-control rounded-pill"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -67,7 +64,7 @@ export default function LoginPage() {
             <input
               type="password"
               id="password"
-              className="form-control"
+              className="form-control rounded-pill"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -76,7 +73,7 @@ export default function LoginPage() {
           <p className="alert alert-error">{error}</p>
           <button
             type="submit"
-            className="btn btn-primary"
+            className="btn btn-primary rounded-pill w-100"
             disabled={loading}
           >
             {loading ? 'Fazendo Login...' : 'Entrar'}

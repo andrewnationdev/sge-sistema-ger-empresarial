@@ -17,39 +17,41 @@ export default function GlobalHeader(props: IGlobalHeader) {
           <Icon name="building" marginRight="1rem" />
           Sistema de Gerenciamento Empresarial
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav"> 
-          <Nav className="me-auto mb-2 mb-lg-0">
-            <Nav.Link href="/dashboard">
-              <Icon name="house" marginRight="0.5rem" />
-              Início
-            </Nav.Link>
-            <Nav.Link href="/funcionarios">
-              <Icon name="person-vcard" marginRight="0.5rem" />
-              Funcionários
-            </Nav.Link>
-            <Nav.Link href="/projetos">
-              <Icon name="kanban" marginRight="0.5rem" />
-              Projetos
-            </Nav.Link>
-            <Nav.Link href="/relatorios">
-              <Icon name="graph-up-arrow" marginRight="0.5rem" />
-              Relatórios
-            </Nav.Link>
-          </Nav>
-          <Nav> 
-            {props.userName && (
-              <Nav.Link as="button" className="btn btn-light me-2" onClick={props.handleAccountPage}>
-                <Icon name="person" marginRight="0.5rem" />
-                Olá, {props.userName}!
+        {props.userName != "" && <>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="responsive-navbar-nav">
+            <Nav className="me-auto mb-2 mb-lg-0">
+              <Nav.Link href="/dashboard" className="active">
+                <Icon name="house" marginRight="0.5rem" />
+                Início
               </Nav.Link>
-            )}
-            <Nav.Link as="button" className="btn btn-danger" onClick={props.handleLogout}>
-              <Icon name="box-arrow-right" marginRight="0.5rem" />
-              Sair
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
+              <Nav.Link href="/funcionarios" className="active">
+                <Icon name="person-vcard" marginRight="0.5rem" />
+                Funcionários
+              </Nav.Link>
+              <Nav.Link href="/projetos" className="active">
+                <Icon name="kanban" marginRight="0.5rem" />
+                Projetos
+              </Nav.Link>
+              <Nav.Link href="/relatorios" className="active">
+                <Icon name="graph-up-arrow" marginRight="0.5rem" />
+                Relatórios
+              </Nav.Link>
+            </Nav>
+            <Nav>
+              {props.userName && (
+                <Nav.Link as="button" className="btn btn-light me-2" onClick={props.handleAccountPage}>
+                  <Icon name="person" marginRight="0.5rem" />
+                  Olá, {props.userName}!
+                </Nav.Link>
+              )}
+              <Nav.Link as="button" className="btn btn-danger" onClick={props.handleLogout}>
+                <Icon name="box-arrow-right" marginRight="0.5rem" />
+                Sair
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </>}
       </Container>
     </Navbar>
   );

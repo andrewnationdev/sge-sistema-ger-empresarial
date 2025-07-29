@@ -1,8 +1,7 @@
-// pages/register.js
-
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import GlobalHeader from '../components/GlobalHeader';
+import { throwError } from '../utils/toast';
 
 export default function RegisterPage() {
   const [nomeUsuario, setNomeUsuario] = useState('');
@@ -29,16 +28,13 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Registro bem-sucedido
-        // Pode redirecionar para a página de login ou dashboard
-        router.push('/login?registered=true'); // Redireciona para login com um parâmetro de sucesso
+        router.push('/login?registered=true');
       } else {
-        // Erro no registro
         setError(data.message || 'Erro ao registrar. Tente novamente.');
       }
     } catch (err) {
       console.error('Erro na requisição de registro:', err);
-      setError('Ocorreu um erro inesperado. Verifique sua conexão.');
+      throwError('Ocorreu um erro inesperado. Verifique sua conexão.')
     } finally {
       setLoading(false);
     }
@@ -47,8 +43,8 @@ export default function RegisterPage() {
   return (
     <div className="login-page">
       <GlobalHeader userName={""}/>
-      <div className="card mt-4">
-        <h2 className="card-header">SGE - Registro de Usuário</h2>
+      <div className="card shadow-sm p-4 mt-4 mx-auto" style={{ maxWidth: '500px', borderRadius: '15px' }}>
+        <h2 className="card-header">Criar Nova Conta</h2>
         <form onSubmit={handleSubmit} className="card-body">
           {/* Campo Nome de Usuário */}
           <div className="form-group">
@@ -56,7 +52,7 @@ export default function RegisterPage() {
             <input
               type="text"
               id="nomeUsuario"
-              className="form-control"
+              className="form-control rounded-pill"
               value={nomeUsuario}
               onChange={(e) => setNomeUsuario(e.target.value)}
               required
@@ -68,38 +64,34 @@ export default function RegisterPage() {
             <input
               type="email"
               id="email"
-              className="form-control"
+              className="form-control rounded-pill"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
-          {/* Campo Senha */}
           <div className="form-group">
             <label htmlFor="password">Senha</label>
             <input
               type="password"
               id="password"
-              className="form-control"
+              className="form-control rounded-pill"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          {/* Mensagem de erro */}
           {error && (
             <p className="alert alert-error">{error}</p>
           )}
-          {/* Botão de registro */}
           <button
             type="submit"
-            className="btn btn-primary"
+            className="btn btn-primary rounded-pill mt-4 w-100"
             disabled={loading}
           >
             {loading ? 'Registrando...' : 'Registrar'}
           </button>
         </form>
-        {/* Link para login */}
         <p className="card-footer">
           Já tem uma conta?{' '}
           <a href="/login">
