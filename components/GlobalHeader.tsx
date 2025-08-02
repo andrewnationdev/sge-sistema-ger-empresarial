@@ -37,6 +37,10 @@ export default function GlobalHeader(props: IGlobalHeader) {
                 <Icon name="graph-up-arrow" marginRight="0.5rem" />
                 Relatórios
               </Nav.Link>
+              <Nav.Link href="/admin" className="active">
+                <Icon name="graph-up-arrow" marginRight="0.5rem" />
+                Admin
+              </Nav.Link>
             </Nav>
             <Nav>
               {props.userName && (

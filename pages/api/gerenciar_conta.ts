@@ -23,10 +23,30 @@ export default async function handler(req, res) {
             return res.status(200).json(rows[0]);
 
         } else if (req.method === 'PUT') {
-            const { nome_usuario, email, senha } = req.body;
+            const { nome_usuario, email, senha_antiga, nova_senha } = req.body;
 
-            if (!nome_usuario && !email && !senha) {
-                return res.status(400).json({ message: 'Nenhum dado para atualização fornecido.' });
+            // Verifica se o usuário está tentando alterar a senha ou email
+            if ((email || nova_senha) && !senha_antiga) {
+                return res.status(400).json({ message: 'A senha antiga é obrigatória para alterar dados sensíveis.' });
+            }
+
+            // Se a senha antiga foi fornecida, comparar com o hash no banco.
+            if (senha_antiga) {
+                const [userRows] = await connection.execute(
+                    'SELECT senha_hash FROM usuarios WHERE id = ?',
+                    [id]
+                );
+
+                if (Array.isArray(userRows) && userRows.length === 0) {
+                    return res.status(404).json({ message: 'Usuário não encontrado.' });
+                }
+
+                const storedHash = userRows[0].senha_hash;
+                const match = await bcrypt.compare(senha_antiga, storedHash);
+
+                if (!match) {
+                    return res.status(401).json({ message: 'Senha antiga incorreta.' });
+                }
             }
 
             let updateFields = [];
@@ -42,8 +62,9 @@ export default async function handler(req, res) {
                 updateValues.push(email);
             }
 
-            if (senha) {
-                const senha_hash = await bcrypt.hash(senha, saltRounds);
+            // Atualiza a senha só se uma nova senha for fornecida
+            if (nova_senha) {
+                const senha_hash = await bcrypt.hash(nova_senha, saltRounds);
                 updateFields.push('senha_hash = ?');
                 updateValues.push(senha_hash);
             }

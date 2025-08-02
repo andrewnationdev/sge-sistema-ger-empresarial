@@ -13,6 +13,7 @@ export default function ContaPage() {
     });
     const [initialUsername, setInitialUsername] = useState('');
     const [userName, setUserName] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
@@ -41,7 +42,7 @@ export default function ContaPage() {
                     setError("Nome de usuário não encontrado no localStorage.");
                     setLoading(false);
                 }
-            } catch (e: any) {
+            } catch (e) {
                 console.error("Erro ao analisar dados do usuário do localStorage:", e);
                 setError("Erro ao carregar informações do usuário.");
                 setLoading(false);
@@ -75,7 +76,7 @@ export default function ContaPage() {
                     senha: ''
                 });
 
-            } catch (err: any) {
+            } catch (err) {
                 setError('Erro ao carregar dados do usuário: ' + err.message);
             } finally {
                 setLoading(false);
@@ -85,7 +86,7 @@ export default function ContaPage() {
         fetchUserDataFromApi();
     }, [initialUsername]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setUserData(prevData => ({
             ...prevData,
@@ -93,7 +94,11 @@ export default function ContaPage() {
         }));
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleOldPasswordChange = (e) => {
+        setOldPassword(e.target.value);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
@@ -102,7 +107,12 @@ export default function ContaPage() {
             setError("ID do usuário não disponível para atualização. Tente recarregar a página.");
             return;
         }
-
+        
+        if (userData.senha && !oldPassword) {
+            setError("Por favor, digite sua senha antiga para definir uma nova.");
+            return;
+        }
+        
         try {
             const response = await fetch(`/api/gerenciar_conta?id=${userData.id}`, {
                 method: 'PUT',
@@ -112,7 +122,8 @@ export default function ContaPage() {
                 body: JSON.stringify({
                     nome_usuario: userData.nome_usuario,
                     email: userData.email,
-                    ...(userData.senha && { senha: userData.senha })
+                    senha_antiga: oldPassword,
+                    ...(userData.senha && { nova_senha: userData.senha })
                 }),
             });
 
@@ -124,8 +135,8 @@ export default function ContaPage() {
 
             setMessage(result.message || 'Dados atualizados com sucesso!');
             setUserData(prevData => ({ ...prevData, senha: '' }));
-
-            // Atualiza o localStorage e o userName exibido
+            setOldPassword('');
+            
             const userString = localStorage.getItem('user');
             if (userString) {
                 const user = JSON.parse(userString);
@@ -134,8 +145,7 @@ export default function ContaPage() {
                 localStorage.setItem('user', JSON.stringify(user));
                 setUserName(userData.nome_usuario);
             }
-
-        } catch (err: any) {
+        } catch (err) {
             setError('Erro ao atualizar: ' + err.message);
         }
     };
@@ -160,7 +170,7 @@ export default function ContaPage() {
     return (
         <div> 
             <GlobalHeader handleLogout={handleLogout} handleAccountPage={handleAccountPage} userName={userName} />
-            <div className="container mt-5">
+            <div className="container mt-5 mb-5">
                 <div className="card shadow-sm p-4 mx-auto" style={{ maxWidth: '500px', borderRadius: '15px' }}>
                     <h2 className="card-title text-center mb-4">Minha Conta</h2>
 
@@ -201,12 +211,25 @@ export default function ContaPage() {
                                 required
                             />
                         </div>
-                        <div className="mb-4">
-                            <label htmlFor="senha" className="form-label">Nova Senha (deixe em branco para não alterar)</label>
+                        <hr />
+                        <div className="mb-3">
+                            <label htmlFor="senha_antiga" className="form-label">Senha Antiga</label>
                             <input
                                 type="password"
                                 className="form-control rounded-pill"
-                                id="senha"
+                                id="senha_antiga"
+                                name="senha_antiga"
+                                value={oldPassword}
+                                onChange={handleOldPasswordChange}
+                                placeholder="Digite sua senha atual"
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="nova_senha" className="form-label">Nova Senha (deixe em branco para não alterar)</label>
+                            <input
+                                type="password"
+                                className="form-control rounded-pill"
+                                id="nova_senha"
                                 name="senha"
                                 value={userData.senha}
                                 onChange={handleChange}
