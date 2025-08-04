@@ -18,7 +18,7 @@ export async function fetchAllPermissoes() {
 }
 
 
-export type IPermissao = 'ADMIN' | 'USER' | 'DESATIVADO' | 'READONLY' | '';
+export type IPermissao = 'ADMIN' | 'USER' | 'DESATIVADO' | 'READONLY' | '' | string;
 
 export function getIdFromPermissao(permissao: IPermissao): string {
     switch (permissao) {
