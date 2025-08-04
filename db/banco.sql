@@ -52,3 +52,12 @@ CREATE TABLE tarefas (
     responsavel_funcionario_id INT,
     FOREIGN KEY (responsavel_funcionario_id) REFERENCES funcionarios(id)
 );
+
+CREATE TABLE permissoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_role ENUM('ADMIN', 'USER', 'DESATIVADO', 'READONLY') DEFAULT 'USER',
+    usuario_id INT UNIQUE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    data_atribuicao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

@@ -6,6 +6,7 @@ import FuncionarioModal from '../components/form/FuncionarioModal';
 import { IFuncionario } from '../types/usuario';
 import { formatPhoneNumber } from '../utils/mascara';
 import { throwError, throwSuccess } from '../utils/toast';
+import { IPermissao, fetchPermissoes } from '../utils/permissions';
 
 const API_FUNCIONARIOS_URL = '/api/funcionarios';
 
@@ -19,6 +20,7 @@ export default function FuncionariosPage() {
   const [funcionario, setFuncionario] = useState<IFuncionario | null>(null);
   const [mode, setMode] = useState<"create" | "edit" | "view">("create");
   const [search_term, setSearchTerm] = useState<string>('');
+  const [role, setRole] = useState<IPermissao | null>(null);
 
   const handle_logout = () => {
     localStorage.removeItem('token');
@@ -80,13 +82,31 @@ export default function FuncionariosPage() {
     fetchFuncionarios();
   }, [fetchFuncionarios]);
 
+    useEffect(() => {
+    const checkPermissions = async () => {
+      const user_id = await fetch(`/api/usuario_by_nome?nome_usuario=${userName}`);
+
+      const result = await user_id.json();
+
+      if (result.id) {
+        const role = await fetchPermissoes(result.id);
+
+        if (role) {
+          setRole(role);
+        }
+      }
+    }
+
+    checkPermissions();
+  }, [userName])
+
   const filteredFuncionarios = useMemo(() => {
     if (!search_term) {
       return funcionarios.filter(f => f.ativo);
     }
     const lowercasedSearchTerm = search_term.toLowerCase();
     return funcionarios.filter((f) => {
-      if (!f.ativo) return false; 
+      if (!f.ativo) return false;
 
       return (
         f.nome.toLowerCase().includes(lowercasedSearchTerm) ||
@@ -141,9 +161,9 @@ export default function FuncionariosPage() {
       const data_to_send = {
         ...funcionario_data,
         ativo: funcionario_data.ativo !== undefined ? funcionario_data.ativo : true,
-        usuario_id: 
+        usuario_id:
           funcionario_data.usuario_id === null ||
-          (typeof funcionario_data.usuario_id === 'string' && funcionario_data.usuario_id === '')
+            (typeof funcionario_data.usuario_id === 'string' && funcionario_data.usuario_id === '')
             ? null
             : Number(funcionario_data.usuario_id),
       };
@@ -226,13 +246,13 @@ export default function FuncionariosPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="btn btn-primary rounded-pill" onClick={() => {
+          {role == 'ADMIN' && <button className="btn btn-primary rounded-pill" onClick={() => {
             setFuncionario(null);
             setMode("create");
             handle_open_funcionario_modal();
           }}>
             <i className="bi bi-person-vcard"></i> Cadastrar Funcionário
-          </button>
+          </button>}
         </div>
 
         {loading && (
@@ -279,21 +299,21 @@ export default function FuncionariosPage() {
                       <td>{funcionario.email || 'N/A'}</td>
                       <td>{formatPhoneNumber(funcionario.telefone) || 'N/A'}</td>
                       <td>
-                        <button className="btn btn-dark btn-sm me-1 rounded-pill" title="Editar" onClick={() => {
+                        {role == 'ADMIN' && <button className="btn btn-dark btn-sm me-1 rounded-pill" title="Editar" onClick={() => {
                           setMode("edit");
                           setFuncionario(funcionario);
                           handle_open_funcionario_modal();
                         }}>
                           <Icon name="pencil" />
-                        </button>
+                        </button>}
                         <button className="btn btn-primary btn-sm me-1 rounded-pill" title="Ver Detalhes" onClick={() => {
                           setMode("view");
                           setFuncionario(funcionario);
                           handle_open_funcionario_modal();
                         }}>
                           <Icon name="eye" />
-                        </button>
-                        {funcionario.ativo && (
+                          </button>
+                        {role == 'ADMIN' && funcionario.ativo && (
                           <button className="btn btn-danger btn-sm rounded-pill" title="Desativar" onClick={() => handle_deactivate_funcionario(funcionario.id!)}>
                             <Icon name="trash" />
                           </button>

@@ -1,6 +1,8 @@
 import Icon from "./Icon";
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useEffect, useState } from "react";
+import { fetchPermissoes, IPermissao } from "../utils/permissions";
 
 interface IGlobalHeader {
   userName: string;
@@ -10,6 +12,28 @@ interface IGlobalHeader {
 }
 
 export default function GlobalHeader(props: IGlobalHeader) {
+  const [role, setRole] = useState<IPermissao | null>(null);
+
+  useEffect(()=>{
+    const checkPermissions = async () => {
+      const user_id = await fetch(`/api/usuario_by_nome?nome_usuario=${props.userName}`);
+
+      const result = await user_id.json();
+
+      if(result.id){
+        const role = await fetchPermissoes(result.id);
+
+        console.log(role)
+
+        if(role){
+          setRole(role);
+        }
+      }
+    }
+
+    checkPermissions();
+  }, [props.userName])
+  
   return (
     <Navbar expand="lg" variant="dark" bg="primary" sticky="top">
       <Container fluid>
@@ -37,10 +61,10 @@ export default function GlobalHeader(props: IGlobalHeader) {
                 <Icon name="graph-up-arrow" marginRight="0.5rem" />
                 Relatórios
               </Nav.Link>
-              <Nav.Link href="/admin" className="active">
+              {role == 'ADMIN' && <Nav.Link href="/admin" className="active">
                 <Icon name="graph-up-arrow" marginRight="0.5rem" />
                 Admin
-              </Nav.Link>
+              </Nav.Link>}
             </Nav>
             <Nav>
               {props.userName && (

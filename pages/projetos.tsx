@@ -5,6 +5,7 @@ import KanbanCard from '../components/KanbanCard';
 import TaskModal from '../components/form/TaskModal';
 import { ITarefa } from '../types/kanban';
 import { throwError } from '../utils/toast';
+import { IPermissao, fetchPermissoes } from '../utils/permissions';
 
 const API_BASE_URL = '/api/projetos';
 
@@ -17,6 +18,7 @@ export default function ProjetosPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [role, setRole] = useState<IPermissao | null>(null);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -121,8 +123,8 @@ export default function ProjetosPage() {
   };
 
   const handleAccountPage = () => {
-        router.push("/conta");
-    };
+    router.push("/conta");
+  };
 
   const handleSaveTask = async (taskData: Partial<ITarefa>) => {
     try {
@@ -141,12 +143,12 @@ export default function ProjetosPage() {
         data_vencimento: taskData.data_vencimento === '' ? null : taskData.data_vencimento,
         criado_por_usuario_id:
           taskData.criado_por_usuario_id === null ||
-          (typeof taskData.criado_por_usuario_id === 'string' && taskData.criado_por_usuario_id === '')
+            (typeof taskData.criado_por_usuario_id === 'string' && taskData.criado_por_usuario_id === '')
             ? null
             : Number(taskData.criado_por_usuario_id),
         responsavel_funcionario_id:
           taskData.responsavel_funcionario_id === null ||
-          (typeof taskData.responsavel_funcionario_id === 'string' && taskData.responsavel_funcionario_id === '')
+            (typeof taskData.responsavel_funcionario_id === 'string' && taskData.responsavel_funcionario_id === '')
             ? null
             : Number(taskData.responsavel_funcionario_id),
       };
@@ -240,9 +242,27 @@ export default function ProjetosPage() {
     }
   }
 
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const user_id = await fetch(`/api/usuario_by_nome?nome_usuario=${userName}`);
+
+      const result = await user_id.json();
+
+      if (result.id) {
+        const role = await fetchPermissoes(result.id);
+
+        if (role) {
+          setRole(role);
+        }
+      }
+    }
+
+    checkPermissions();
+  }, [userName])
+
   return (
     <main>
-      <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage}/>
+      <GlobalHeader userName={userName} handleLogout={handleLogout} handleAccountPage={handleAccountPage} />
       <div className="container mt-5">
         <h1 className="mb-0">Quadro Kanban de Tarefas e Projetos</h1>
 
@@ -257,7 +277,7 @@ export default function ProjetosPage() {
             />
           </div>
           <div className="d-flex justify-content-end mb-3">
-            {!loading && !error && (
+            {!loading && !error && role !== 'READONLY' && (
               <button className="btn btn-primary rounded-pill" onClick={handleOpenAddModal}>
                 <i className="bi bi-plus-lg"></i> Adicionar Tarefa
               </button>
@@ -331,6 +351,7 @@ export default function ProjetosPage() {
                       key={tarefa.id}
                       card={tarefa}
                       onClick={() => {
+                        if (role === 'READONLY') return;
                         handleOpenEditModal(tarefa);
                       }}
                     />
@@ -341,7 +362,7 @@ export default function ProjetosPage() {
           </div>
         )}
       </div>
-      {showTaskModal && (
+      {showTaskModal && role !== 'READONLY' && (
         <TaskModal
           onClose={handleCloseTaskModal}
           task={selectedTask}
