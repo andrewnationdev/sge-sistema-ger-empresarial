@@ -19,7 +19,7 @@ export default function AdminPage() {
     const [errorFuncionarios, setErrorFuncionarios] = useState<string | null>(null);
     const [searchFuncionarioTerm, setSearchFuncionarioTerm] = useState<string>('');
     const [userRoles, setUserRoles] = useState<{
-        [nomeUsuario: string]: { id: number; role: string | IPermissao }
+        [nomeUsuario: string]: { usuario_id: number; role: string | IPermissao }
     }>({});
     const [usuarios, setUsuarios] = useState([]);
     const [loadingUsuarios, setLoadingUsuarios] = useState(true);
@@ -118,16 +118,16 @@ export default function AdminPage() {
         setLoadingUserRoles(true);
         setErrorUserRoles(null);
         try {
-            const permissoesData: { id: number; user_role: string }[] = await fetchAllPermissoes();
+            const permissoesData: { usuario_id: number; user_role: string }[] = await fetchAllPermissoes();
 
-            const rolesMapByUsername: { [nomeUsuario: string]: { id: number; role: string | IPermissao } } = {};
+            const rolesMapByUsername: { [nomeUsuario: string]: { usuario_id: number; role: string | IPermissao } } = {};
 
             permissoesData.forEach((permissao) => {
-                const usuarioCorresp = usersList.find(u => u.id === permissao.id);
+                const usuarioCorresp = usersList.find(u => u.id === permissao.usuario_id);
 
                 if (usuarioCorresp && usuarioCorresp.nome_usuario) {
                     rolesMapByUsername[usuarioCorresp.nome_usuario] = {
-                        id: permissao.id,
+                        usuario_id: permissao.usuario_id,
                         role: permissao.user_role as IPermissao
                     };
                 }

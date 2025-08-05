@@ -20,8 +20,18 @@ export default async function handler(req, res) {
         [nome_usuario, email, senha_hash]
       );
 
+      //@ts-ignore
+      let id = result?.insertId;
+
+      if (id) {
+        const [result_perm] = await pool.execute(
+          'INSERT INTO permissoes (user_role, usuario_id) VALUES (\'READONLY\', ?) ', [result?.insertId]
+        );
+      }
+
       // @ts-ignore
       res.status(201).json({ message: 'Usuário registrado com sucesso!', id: result?.insertId });
+
     } catch (error) {
       console.error('Erro ao registar usuário:', error);
       if (error.code === 'ER_DUP_ENTRY') {

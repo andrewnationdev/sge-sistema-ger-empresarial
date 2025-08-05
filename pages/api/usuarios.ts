@@ -4,6 +4,13 @@ import bcrypt from 'bcryptjs';
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
+      const { nome_usuario, email, senha } = req.body;
+
+      if(email){
+        const [rows] = await pool.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+        res.status(200).json(rows);
+      }
+      
       const [rows] = await pool.query('SELECT id, nome_usuario, email, data_registro FROM usuarios');
       res.status(200).json(rows);
     } catch (error) {

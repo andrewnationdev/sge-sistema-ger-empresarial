@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import GlobalHeader from '../components/GlobalHeader';
 import { throwError } from '../utils/toast';
+import { getIdFromPermissao } from '../utils/permissions';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,10 +11,27 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const allowLogin = async (email: string) => {
+    const users = await fetch(`/api/usuarios`);
+    const data = await users.json();
+    
+    const user = data.find((user) => user.email === email);
+
+    const permissoes = await fetch(`/api/permissoes`);
+    const permissoesData = await permissoes.json();
+
+    //Verifique se o usuário tem permissão para login
+
+    return true;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+
+    let loginAllowed = await allowLogin(email);
+    if(!loginAllowed) return;
 
     try {
       const response = await fetch('/api/auth/login', {
