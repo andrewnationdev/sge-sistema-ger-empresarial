@@ -24,6 +24,7 @@ export default async function handler(req, res) {
       let id = result?.insertId;
 
       if (id) {
+        //@ts-ignore
         const [result_perm] = await pool.execute(
           'INSERT INTO permissoes (user_role, usuario_id) VALUES (\'READONLY\', ?) ', [result?.insertId]
         );
