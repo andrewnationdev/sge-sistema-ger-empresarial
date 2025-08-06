@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IFuncionario, IUsuario } from '../../types/usuario';
 import { throwMessage } from '../../utils/toast';
 
-interface FuncionarioFormProps {
+export interface FuncionarioFormProps {
     onSubmit: (data: Partial<IFuncionario>) => void;
     onCancel: () => void;
     mode: 'create' | 'edit' | 'view';

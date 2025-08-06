@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from "react";
 import { fetchPermissoes, IPermissao } from "../utils/permissions";
 
-interface IGlobalHeader {
+export interface IGlobalHeader {
   userName: string;
   handleLogout?: () => void;
   handleAccountPage?: () => void;

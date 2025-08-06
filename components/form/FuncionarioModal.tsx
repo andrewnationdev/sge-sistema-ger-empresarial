@@ -1,13 +1,6 @@
 import React from 'react';
-import { IFuncionario } from '../../types/usuario';
 import FuncionarioForm from './FuncionarioForm';
-
-interface FuncionarioModalProps {
-  onClose: () => void;
-  onSave: (data: Partial<IFuncionario>) => void;
-  mode: 'create' | 'edit' | 'view';
-  funcionarioToEdit?: IFuncionario | null;
-}
+import { FuncionarioModalProps } from '../../types/forms';
 
 export default function FuncionarioModal({ onClose, onSave, mode, funcionarioToEdit }: FuncionarioModalProps) {
   const getTitle = () => {

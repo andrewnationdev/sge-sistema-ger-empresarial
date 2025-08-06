@@ -44,3 +44,12 @@ export interface ITarefa {
    */
   responsavel_funcionario_id: number | null;
 }
+
+export interface IColorCard {
+    status: TStatus,
+    prioridade: TPrioridade
+}
+
+export type TStatus = "A FAZER" | "EM ANDAMENTO" | "CONCLUIDO";
+
+export type TPrioridade = "ALTA" | "MEDIA" | "BAIXA";

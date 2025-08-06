@@ -20,6 +20,14 @@ export default async function handler(req, res) {
       }
 
       const user = rows[0];
+
+      const [userPermissions] = await pool.query('SELECT user_role FROM permissoes WHERE usuario_id = ?', [user.id]);
+
+      //@ts-ignore
+       if (userPermissions?.length > 0 && userPermissions[0].user_role === 'DESATIVADO') {
+        return res.status(403).json({ message: 'Login desativado para este usuário.' });
+      }
+
       const isPasswordValid = await bcrypt.compare(senha, user.senha_hash);
 
       if (!isPasswordValid) {

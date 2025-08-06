@@ -1,11 +1,4 @@
-interface IColorCard {
-    status: TStatus,
-    prioridade: TPrioridade
-}
-
-type TStatus = "A FAZER" | "EM ANDAMENTO" | "CONCLUIDO";
-
-type TPrioridade = "ALTA" | "MEDIA" | "BAIXA";
+import { IColorCard } from "../types/kanban";
 
 const ColorMaping = {
     "A FAZER": {
