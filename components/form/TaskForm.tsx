@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ITarefa } from '../../types/kanban';
-import { IFuncionario } from '../../types/forms';
+import { IFuncionario } from '../../types/usuario';
 
 async function getAllFuncionarios(): Promise<IFuncionario[]> {
   try {

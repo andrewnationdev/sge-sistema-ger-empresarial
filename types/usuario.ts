@@ -13,7 +13,7 @@ export interface IFuncionario {
   email: string | null; 
   telefone: string | null;
   data_contratacao: string | null;
-  ativo: boolean;
+  ativo?: boolean;
   usuario_id: number | null;
   usuarioNome?: string;
 }

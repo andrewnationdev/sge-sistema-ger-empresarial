@@ -1,9 +1,4 @@
-export interface IFuncionario {
-  id: number;
-  nome: string;
-  sobrenome: string;
-  ativo?:boolean;
-}
+import { IFuncionario } from "./usuario";
 
 export interface FuncionarioModalProps {
   onClose: () => void;
