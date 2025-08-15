@@ -1,0 +1,69 @@
+@startuml
+' Configurações visuais para um DER
+skinparam linetype ortho
+hide circle
+skinparam class {
+    borderColor #2A6849
+    backgroundColor #B2E5C9
+    arrowColor #2A6849
+    headerFontColor #2A6849
+    headerBackgroundColor #91C7A9
+}
+
+' Entidades (Tabelas)
+entity "usuarios" as usuarios {
+  *id : INT
+  --
+  nome_usuario : VARCHAR(50)
+  email : VARCHAR(100)
+  senha_hash : VARCHAR(255)
+  data_registro : TIMESTAMP
+}
+
+entity "funcionarios" as funcionarios {
+  *id : INT
+  --
+  nome : VARCHAR(100)
+  sobrenome : VARCHAR(100)
+  cargo : VARCHAR(100)
+  usuario_id : INT
+}
+
+entity "tarefas" as tarefas {
+  *id : INT
+  --
+  titulo : VARCHAR(255)
+  descricao : TEXT
+  status : ENUM
+  prioridade : ENUM
+  data_criacao : TIMESTAMP
+  data_vencimento : DATE
+  responsavel_funcionario_id : INT
+}
+
+entity "permissoes" as permissoes {
+  *id : INT
+  --
+  user_role : ENUM
+  usuario_id : INT
+  data_atribuicao : TIMESTAMP
+}
+
+' Relacionamentos
+' Notação: |o--o{ ou }|--|{
+' |o -- Zero ou Um
+' || -- Exatamente Um
+' }o -- Zero ou Muitos
+' }{ -- Um ou Muitos
+
+' Usuário e Permissões (1-para-0 ou 1)
+usuarios "1" -- "0..1" permissoes : "tem"
+
+' Usuário e Funcionário (1-para-0 ou 1)
+usuarios "1" -- "0..1" funcionarios : "é"
+
+
+' Funcionário e Tarefas (1-para-Muitos)
+funcionarios "1" -- "0..*" tarefas : "responsável por"
+
+@enduml

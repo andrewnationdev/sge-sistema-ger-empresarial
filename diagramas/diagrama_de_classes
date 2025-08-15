@@ -1,0 +1,50 @@
+@startuml
+
+class usuarios {
+    *id: INT
+    --
+    *nome_usuario: VARCHAR(50)
+    *email: VARCHAR(100)
+    senha_hash: VARCHAR(255)
+    data_registro: TIMESTAMP
+}
+
+class funcionarios {
+    *id: INT
+    --
+    *nome: VARCHAR(100)
+    *sobrenome: VARCHAR(100)
+    cargo: VARCHAR(100)
+    departamento: VARCHAR(100)
+    email: VARCHAR(100) UNIQUE
+    telefone: VARCHAR(20)
+    data_contratacao: DATE
+    ativo: BOOLEAN
+    usuario_id: INT UNIQUE
+}
+
+class tarefas {
+    *id: INT
+    --
+    *titulo: VARCHAR(255)
+    descricao: TEXT
+    status: ENUM
+    prioridade: ENUM
+    data_criacao: TIMESTAMP
+    data_vencimento: DATE
+    responsavel_funcionario_id: INT
+}
+
+class permissoes {
+    *id: INT
+    --
+    user_role: ENUM
+    usuario_id: INT UNIQUE
+    data_atribuicao: TIMESTAMP
+}
+
+usuarios "1" -- "0..1" permissoes : <<FK>> usuario_id
+usuarios "1" -- "0..1" funcionarios : <<FK>> usuario_id
+funcionarios "1" -- "*" tarefas : <<FK>> responsavel_funcionario_id
+
+@enduml
