@@ -29,6 +29,15 @@ describe('Tela Kanban', () => {
         responsavel_funcionario_id: 5
     }
 
+    const item_editado = {
+        ...item,
+        titulo: 'Item Editado',
+        status: 'A FAZER',
+        descricao: 'Descrição atualizada do novo item',
+        prioridade: 'MÉDIA',
+        data_vencimento: "2025-09-19",
+    }
+
     const props_item = {
         id: null
     }
@@ -78,7 +87,28 @@ describe('Tela Kanban', () => {
 
     });
 
-    test('Deve editar item', () => { });
+    test('Deve editar item', async () => {
+        const token = await obterToken();
+        const req = await fetch(API_ROUTE, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: props_item.id,
+                ...item_editado
+            })
+        });
+
+        const data = await req.json()
+
+        console.log(data)
+
+        expect(data.message).not.toBe("Erro interno do servidor");
+        expect(data.message).toBe("Tarefa atualizada com sucesso!")
+
+    });
 
     test('Deve deletar item', async () => {
         const token = await obterToken();
