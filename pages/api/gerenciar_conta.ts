@@ -5,6 +5,7 @@ const saltRounds = 10;
 
 export default async function handler(req, res) {
     const { id } = req.query;
+    console.log('Método recebido:', req.method);
 
     let connection;
     try {

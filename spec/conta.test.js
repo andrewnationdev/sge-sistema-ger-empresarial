@@ -55,7 +55,10 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(usuarios.valido),
+            body: JSON.stringify({
+                email: 'ander134@gmail.com',
+                senha: 'ander134'
+            }),
         });
 
         const data = await response.json();
@@ -63,7 +66,7 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
         expect(response.status).toBe(200);
         expect(data).toHaveProperty('token');
 
-        const res = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/usuario_by_nome?nome_usuario=${usuarios.valido.usuario}`, {
+        const res = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/usuario_by_nome?nome_usuario=ander134`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -75,18 +78,18 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
 
         expect(u_data).toHaveProperty('id')
 
-        const req_alterar_dados = await fetch("https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_conta", {
+        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_conta?id=${u_data.id}`, {
             method: "PATCH",
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${data.token}`
+                'Authorization': `Bearer ${u_data.token}`
             },
-            body: {
-                nome_usuario: usuarios.valido.usuario,
-                email: usuarios.valido.email,
-                senha_antiga: usuarios.valido.senha,
+            body: JSON.stringify({
+                nome_usuario: 'ander134',
+                email: 'ander134@gmail.com',
+                senha_antiga: 'ander134',
                 nova_senha: usuarios.novos_dados.senha
-            }
+            })
         });
 
         console.log(req_alterar_dados)
