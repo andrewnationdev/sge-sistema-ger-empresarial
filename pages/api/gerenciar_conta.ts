@@ -23,7 +23,7 @@ export default async function handler(req, res) {
 
             return res.status(200).json(rows[0]);
 
-    } else if (req.method === 'PATCH') {
+    } else if (req.method === 'PUT') {
             const { nome_usuario, email, senha_antiga, nova_senha } = req.body;
 
             // Verifica se o usuário está tentando alterar a senha ou email
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
             return res.status(200).json({ message: 'Usuário atualizado com sucesso.' });
 
         } else {
-            res.setHeader('Allow', ['GET', 'PATCH']);
+            res.setHeader('Allow', ['GET', 'PUT']);
             return res.status(405).end(`Method ${req.method} Not Allowed`);
         }
     } catch (error) {

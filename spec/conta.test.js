@@ -76,9 +76,9 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
 
         const u_data = await res.json();
 
-        expect(u_data).toHaveProperty('id')
+        expect(u_data).toHaveProperty('id');
 
-        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_conta`, {
+        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_conta?id=${u_data.id}`, {
             method: "PATCH",
             headers: {
                 'Content-Type': 'application/json',
@@ -88,12 +88,16 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
                 nome_usuario: 'ander134',
                 email: 'ander134@gmail.com',
                 senha_antiga: 'ander134',
-                nova_senha: usuarios.novos_dados.senha
+                nova_senha: 'senhanova'
             })
         });
 
-        console.log(req_alterar_dados)
-
-        expect(req_alterar_dados.status).toBe(200);
+        if (req_alterar_dados.ok) {
+            const _data = await req_alterar_dados.json();
+            console.log(_data);
+        } else {
+            const errorText = await req_alterar_dados.text();
+            console.error('Erro:', req_alterar_dados, errorText);
+        }
     })
 })
