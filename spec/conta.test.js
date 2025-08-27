@@ -78,7 +78,7 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
 
         expect(u_data).toHaveProperty('id');
 
-        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_conta?id=${u_data.id}`, {
+        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_contas?id=${u_data.id}`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
