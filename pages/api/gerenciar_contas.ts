@@ -67,6 +67,6 @@ export default async function handler(req, res) {
         }
     } else {
         res.setHeader('Allow', ['GET', 'PUT']);
-        res.status(405).end(`Method 2 Not Allowed`);
+        res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }
