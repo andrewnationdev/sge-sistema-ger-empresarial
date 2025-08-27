@@ -82,14 +82,8 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${u_data.token}`
-            },
-            body: JSON.stringify({
-                nome_usuario: 'ander134',
-                email: 'ander134@gmail.com',
-                senha_antiga: 'ander134',
-                nova_senha: 'senhanova'
-            })
+                'Authorization': `Bearer ${data.token}`
+            }
         });
 
         if (req_alterar_dados.ok) {
