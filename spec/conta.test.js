@@ -11,7 +11,7 @@ const usuarios = {
         senha: 'senha_incorreta',
     },
     novos_dados: {
-        email: '',
+        email: 'admin24@gmail.com',
         senha: 'senhanova'
     }
 }
@@ -56,8 +56,8 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email: 'ander134@gmail.com',
-                senha: 'ander134'
+                email: 'admin24@gmail.com',
+                senha: 'admin24'
             }),
         });
 
@@ -78,7 +78,7 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
 
         expect(u_data).toHaveProperty('id');
 
-        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/usuario_gerenciar?id=${u_data.id}`, {
+        const req_alterar_dados = await fetch(`https://sge-sistema-ger-empresarial.vercel.app/api/gerenciar_contas?id=${u_data.id}`, {
             method: "PUT",
             headers: {
                 'Content-Type': 'application/json',
@@ -88,13 +88,15 @@ describe('Fluxo de Alteração de Tela de Usuário', () => {
                 nome_usuario: 'ander134',
                 email: 'ander134@gmail.com',
                 senha_antiga: 'ander134',
-                nova_senha: 'senhanova'
+                nova_senha: 'novasenha'
             })
         });
 
         if (req_alterar_dados.ok) {
             const _data = await req_alterar_dados.json();
             console.log(_data);
+
+            expect(req_alterar_dados.status).toBe(200)
         } else {
             const errorText = await req_alterar_dados.text();
             console.error('Erro:', req_alterar_dados, errorText);
