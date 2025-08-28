@@ -114,7 +114,7 @@ export default function ContaPage() {
         }
         
         try {
-            const response = await fetch(`/api/gerenciar_conta?id=${userData.id}`, {
+            const response = await fetch(`/api/gerenciar_contas?id=${userData.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
