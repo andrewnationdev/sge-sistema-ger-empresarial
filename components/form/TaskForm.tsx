@@ -148,19 +148,6 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
         />
       </div>
 
-      {/*<div className="mb-3">
-        <label htmlFor="criadoPorUsuarioId" className="form-label">Criado Por (ID do Usuário):</label>
-        <input
-          type="number"
-          className="form-control rounded-pill"
-          id="criadoPorUsuarioId"
-          name="criado_por_usuario_id"
-          value={formData.criado_por_usuario_id === null ? '' : formData.criado_por_usuario_id}
-          onChange={handleChange}
-          placeholder="Opcional"
-        />
-      </div>*/}
-
       <div className="mb-3">
         <label htmlFor="responsavelFuncionarioId" className="form-label">Responsável (ID do Funcionário):</label>
         <select
@@ -184,12 +171,14 @@ export default function TaskForm({ initialData, onSubmit, onDelete }: { initialD
           )}
         </select>
       </div>
+      <div className="d-flex justify-content-start gap-2 mt-4">
       <button type="submit" className="btn btn-primary rounded-pill">
         {initialData ? "Salvar Alterações" : "Adicionar Tarefa"}
       </button>
       {initialData && <button type="button" className="btn btn-danger rounded-pill" onClick={() => onDelete(initialData.id)}>
         Deletar Item
       </button>}
+      </div>
     </form>
   );
 }
