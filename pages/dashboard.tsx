@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Icon from '../components/Icon';
 import GlobalHeader from '../components/GlobalHeader';
+import getFormattedDate from '../utils/currDate';
 
 export default function DashboardPage() {
   const [userName, setUserName] = useState('');
@@ -42,6 +43,7 @@ export default function DashboardPage() {
       <div className="container mt-5">
         <div className="p-5 bg-white rounded-3 shadow-sm">
           <h1 className="display-4">Bem-vindo ao Sistema de Gerenciamento Empresarial</h1>
+          <p className="lead">{getFormattedDate()}!</p>
           <p className="lead">Esta é a área principal do seu dashboard.</p>
           <hr className="my-4" />
           <p>Use a barra de navegação acima para acessar as diferentes seções do sistema.</p>

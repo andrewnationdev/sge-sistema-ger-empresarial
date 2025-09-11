@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { IFuncionario, IUsuario } from '../../types/usuario';
 import { throwMessage } from '../../utils/toast';
+import { IMaskInput } from 'react-imask';
 
 export interface FuncionarioFormProps {
     onSubmit: (data: Partial<IFuncionario>) => void;
@@ -137,7 +138,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
     const is_active_disabled = mode === 'view' || mode === 'create' || is_submitting;
 
     return (
-        <form onSubmit={handle_submit} style={{ maxHeight: "500px", overflowY: "auto", paddingRight: "15px" }}>
+        <form onSubmit={handle_submit} style={{ maxHeight: "450px", overflowY: "auto", paddingRight: "15px" }}>
             {mode === 'create' && (
                 <div className="mb-3">
                     <label htmlFor="select_user" className="form-label">Selecionar Usuário:</label>
@@ -229,14 +230,18 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
             </div>
             <div className="mb-3">
                 <label htmlFor="telefone" className="form-label">Telefone:</label>
-                <input
-                    type="text"
+                <IMaskInput
+                    mask="(00) 00000-0000"
+                    type="tel"
                     className="form-control rounded-pill"
                     id="telefone"
                     name="telefone"
                     value={form_data.telefone || ''}
-                    onChange={handle_change}
+                    onAccept={(value) => {
+                        handle_change({ target: { name: 'telefone', value } } as any);
+                    }}
                     disabled={is_disabled}
+                    placeholder="(00) 00000-0000"
                 />
             </div>
             <div className="mb-3">
@@ -269,7 +274,7 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                 </div>
             )}
 
-            <div className="d-flex justify-content-end gap-2 mt-4">
+            <div className="d-flex justify-content-start gap-2 mt-4">
                 {mode === 'view' ? (
                     <button type="button" className="btn btn-primary" onClick={() => {
                         throwMessage('Para editar, reabra a modal no modo de edição.');
@@ -277,10 +282,10 @@ export default function FuncionarioForm({ onSubmit, onCancel, mode, initialData 
                     }}>OK</button>
                 ) : (
                     <>
-                        <button type="button" className="btn btn-secondary rounded-pill" onClick={onCancel} disabled={is_submitting}>Cancelar</button>
-                        <button type="submit" className="btn btn-success rounded-pill" disabled={is_submitting}>
+                        <button type="submit" className="btn btn-primary rounded-pill" disabled={is_submitting}>
                             {is_submitting ? 'Salvando...' : (mode === 'create' ? 'Cadastrar Funcionário' : 'Atualizar Funcionário')}
                         </button>
+                        <button type="button" className="btn btn-secondary rounded-pill" onClick={onCancel} disabled={is_submitting}>Cancelar</button>
                     </>
                 )}
             </div>
