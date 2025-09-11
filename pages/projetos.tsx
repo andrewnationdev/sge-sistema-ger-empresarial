@@ -216,6 +216,9 @@ export default function ProjetosPage() {
   const tarefasConcluido = filteredTarefas.filter(tarefa => tarefa.status === "CONCLUIDO");
 
   async function handleDeleteTask(id: number) {
+    const user_input = window.confirm("Tem certeza que deseja deletar esta tarefa? Esta ação não pode ser desfeita.");
+    if (!user_input) return;
+    
     try {
       const token = localStorage.getItem('token');
 
